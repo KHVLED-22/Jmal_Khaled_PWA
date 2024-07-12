@@ -1,0 +1,16 @@
+.under-card
+{
+    background-color:  #E5E7EB;
+    border-radius: 10px;
+}
+@media (max-width: 1237px) {
+    input {
+      width: 300px;
+    }
+  }
+  @media screen and (max-width: 1237px) {
+    :host ::ng-deep .p-dropdown{
+      width: 300px;
+    }
+  }
+

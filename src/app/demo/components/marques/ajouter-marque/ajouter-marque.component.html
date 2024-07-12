@@ -1,0 +1,68 @@
+<p-dialog [(visible)]="marquetDialog" [style]="{ width: '450px' }" header="Ajouter Marque" [modal]="true" class="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <div class="field  grid">
+
+            <label for="name"class="col-fixed" style="width:100px">Nom <span class="text-red-500">*</span></label>
+            <div class="col">
+            <input type="text" pInputText id="name" [(ngModel)]="Marque.nom" required [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !Marque.nom) || (existNom && Marque.nom) }" (input)="detectChanges('nom',$event)"/>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Marque.nom">Nom est obligatoire.</small>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="existNom && Marque.nom">Nom doit etre unique.</small>
+
+             </div>
+
+        </div>
+        <div class="field  grid">
+
+            <label for="name"class="col-fixed" style="width:100px">Designation <span class="text-red-500">*</span></label>
+            <div class="col">
+            <input type="text" pInputText id="name" [(ngModel)]="Marque.designation" required [ngClass]="{ 'ng-invalid ng-dirty':( submitted && !Marque.designation) || (existDesignation && Marque.designation) }" (input)="detectChanges('designation',$event)" />
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Marque.designation">Designation est obligatoire.</small>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="existDesignation && Marque.designation">Designation doit etre unique.</small>
+
+             </div>
+
+        </div>
+        <div class="field  grid">
+
+            <label for="name" class="col-fixed" style="width:100px">Logo <span class="text-red-500">*</span></label>
+            <div class="col">
+                <p-fileUpload [ngClass]="{ 'ng-invalid ng-dirty': submitted && !idImage }" (onSelect)="changeImage()" name="files" url="http://192.168.0.245/api/upload" (onUpload)="onUpload($event)" [chooseLabel]="labelButton" [multiple]="false" accept="image/*" [maxFileSize]="1000000" >
+
+                    <ng-template pTemplate="content">
+                        <ul *ngIf="uploadedFiles.length">
+                            <li *ngFor="let file of uploadedFiles">{{ file.name }} </li>
+                        </ul>
+                        <ul *ngIf="updateFile && Marque.logo?.name">
+                            <img [src]="Marque.logo?.name" width="50" height="40" alt="Image">
+                        </ul>
+                    </ng-template>
+                </p-fileUpload>
+                <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !idImage">Logo est obligatoire.</small>
+
+             </div>
+
+
+        </div>
+
+        <div class="field  grid">
+
+            <label for="name" class="col-fixed" style="width:100px" >Activé</label>
+            <div class="col">
+                <p-inputSwitch class="mr-3" [(ngModel)]="Marque.activer"></p-inputSwitch>
+             </div>
+
+        </div>
+
+
+
+
+
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text"  [disabled]="disableSauvgarde" (click)="savemarque()"></button>
+    </ng-template>
+</p-dialog>

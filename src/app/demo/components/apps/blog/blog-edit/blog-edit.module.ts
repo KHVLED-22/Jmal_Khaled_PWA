@@ -10,6 +10,7 @@ import { RippleModule } from 'primeng/ripple';
 import { BlogEditRoutingModule } from './blog-edit-routing.module';
 import { BlogEditComponent } from './blog-edit.component';
 
+
 @NgModule({
     imports: [CommonModule, ButtonModule, InputTextModule, InputTextareaModule, FileUploadModule, RippleModule, ChipModule, EditorModule, BlogEditRoutingModule],
     declarations: [BlogEditComponent]

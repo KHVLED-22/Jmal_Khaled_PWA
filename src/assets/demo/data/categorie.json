@@ -1,0 +1,34 @@
+{
+    "data": [
+        {
+            "id": 1,
+            "nom": "f230fh0g3",
+            "designation": "rania",
+            "niveau": "Bamboo Watch",
+            "niveauParent": "Product Description",
+            "nbArticles": "bamboo-watch.jpg",
+            "activer": true,
+            "activerMenu": false
+        },
+        {
+            "id":2,
+            "nom": "f230fh0g3",
+            "designation": "rania",
+            "niveau": "Bamboo Watch",
+            "niveauParent": "Product Description",
+            "nbArticles": "bamboo-watch.jpg",
+            "activer": true,
+            "activerMenu": true
+        },
+        {
+            "id": 3,
+            "nom": "f230fh0g3",
+            "designation": "rania",
+            "niveau": "Bamboo Watch",
+            "niveauParent": "Product Description",
+            "nbArticles": "bamboo-watch.jpg",
+            "activer": true,
+            "activerMenu": false
+        }
+    ]
+}

@@ -51,7 +51,7 @@ export class KanbanAppComponent implements OnInit, OnDestroy {
                 .layout-content {
                     width: 100%;
                 }
-                
+
                 .layout-topbar {
                     width: 100%;
                 }

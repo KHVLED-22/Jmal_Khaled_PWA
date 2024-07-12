@@ -49,8 +49,8 @@ export class KanbanCardComponent implements OnDestroy {
     }
 
     generateTaskInfo() {
-        let total = this.card.taskList.tasks.length;
-        let completed = this.card.taskList.tasks.filter((t) => t.completed).length;
+        let total = this.card?.taskList?.tasks.length;
+        let completed = this.card?.taskList?.tasks.filter((t) => t.completed).length;
         return `${completed} / ${total}`;
     }
 

@@ -53,6 +53,7 @@ import { KanbanService } from './service/kanban.service';
         CheckboxModule
     ],
     declarations: [KanbanAppComponent, KanbanListComponent, KanbanSidebarComponent, KanbanCardComponent],
-    providers: [KanbanService]
+    providers: [KanbanService],
+    exports:[KanbanAppComponent, KanbanListComponent, KanbanSidebarComponent, KanbanCardComponent]
 })
 export class KanbanAppModule {}

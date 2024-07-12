@@ -10,7 +10,8 @@ export interface KanbanCard {
     dueDate?: string;
     completed?: boolean;
     priority?: Object;
-    taskList: TaskList;
+    taskList?: TaskList;
+    imageUrl?:any
 }
 
 export interface KanbanList {

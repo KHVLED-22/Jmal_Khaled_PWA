@@ -27,13 +27,19 @@ export class KanbanService {
         this.http
             .get<any>('assets/demo/data/kanban.json')
             .toPromise()
-            .then((res) => res.data as KanbanList[])
+            .then((res) =>
+            res.data as KanbanList[])
             .then((data) => {
                 this.updateLists(data);
             });
+
+                // this.updateLists(this.staticList.data);
+
+
     }
 
     private updateLists(data: any[]) {
+        console.log(data)
         this._lists = data;
         let small = data.map((l) => ({ listId: l.listId, title: l.title }));
 

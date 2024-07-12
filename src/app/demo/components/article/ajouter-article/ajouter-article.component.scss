@@ -1,0 +1,37 @@
+.th-name
+{
+    font-weight: bold;
+    background-color: #64748B;
+    display: flex;
+    justify-content: center;
+    color: white;
+}
+.custom-column{
+ background-color:#F8FAFC ;
+}
+.icon
+{
+    // font-weight: bold;
+    color: #295BAC;
+}
+:host ::ng-deep {
+    .p-fileupload {
+        padding: 0;
+
+        .p-fileupload-buttonbar {
+            display: none;
+        }
+
+        .p-fileupload-content {
+            border: 0 none;
+        }
+
+        .p-fileupload-row {
+            display: none;
+        }
+
+        .p-progressbar {
+            display: none;
+        }
+    }
+}

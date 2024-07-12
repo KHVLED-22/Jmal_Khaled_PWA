@@ -1,0 +1,465 @@
+<div class="card">
+    <p-toast></p-toast>
+
+    <span class="block text-900 font-bold text-xl mb-4">Fiche Article </span>
+    <div class="flex justify-content-end flex-wrap px-0 py-0">
+
+        <button pButton pRipple type="button"  label="Sauvegarder" (click)="Sauvegarder()" [disabled]="disableSave"  tooltipPosition="bottom" class=" p-button-outlined text-blue-800 mr-2 mb-2"></button>
+        <button pButton pRipple type="button" icon="pi pi-eye" label="Visualiser"    tooltipPosition="bottom" class=" p-button-outlined text-blue-800 mr-2 mb-2"></button>
+    </div>
+
+
+
+    <p-tabView class="py-0 px-0 " (onChange)="onChangeTab($event)" [(activeIndex)]="seletedTab" >
+        <p-tabPanel header="Géneral"  >
+
+            <div class="grid grid-nogutter flex-wrap gap-3 p-fluid">
+                <div class="col-12 lg:col-8">
+                    <div class="grid formgrid">
+
+                        <div class="col-12 lg:col-6 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Nom <span class="text-red-500">*</span></label>
+
+                            <input pInputText type="text" placeholder="Nom" label="Nom" [(ngModel)]="Article.nom_article" [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Article.nom_article}"  (input)="inputValueChange('nom_article',$event)" />
+                            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Article.nom_article ">Nom obligatoire</small>
+
+                        </div>
+                        <div class="col-12 lg:col-6 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Réferance <span class="text-red-500">*</span></label>
+
+                            <input pInputText type="text" placeholder="Réference" label="Réference" [(ngModel)]="Article.reference"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Article.reference}"  (input)="inputValueChange('reference',$event)"/>
+                            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Article.reference ">Réferance obligatoire .</small>
+
+                        </div>
+
+                        <div class="col-12 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Description <span class="text-red-500">*</span></label>
+
+                            <p-editor [style]="{ height: '150px' }" [(ngModel)]="Article.description"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Article.description}"  (onTextChange)="inputValueChange('description',$event)"></p-editor>
+                            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Article.description ">Description obligatoire .</small>
+
+                        </div>
+                        <div class="col-12 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Images</label>
+                            <p-fileUpload
+                            #fileUploader
+                            name="files"
+                            (onUpload)="onUpload($event)"
+                            [customUpload]="false"
+                            [multiple]="true"
+                            url="http://192.168.0.245/api/upload"
+                            accept="image/*"
+                            [showUploadButton]="true"
+                            [showCancelButton]="false"
+                            [auto]="true"
+                            styleClass="border-1 surface-border surface-card border-round"
+                            [ngClass]="{ 'ng-invalid ng-dirty': uploadImages && Article.images.length==0}"
+                        >
+                        <small class="ng-dirty ng-invalid text-red-500" *ngIf="uploadImages && Article.images.length==0">selectionner image(s) .</small>
+
+                            <ng-template pTemplate="content">
+                                <div class="h-15rem overflow-y-auto py-3 border-round" style="cursor: copy" (click)="fileUploader.advancedFileInput.nativeElement.click()">
+                                    <div *ngIf="!images.length" class="flex flex-column w-full h-full justify-content-center align-items-center">
+                                        <i class="pi pi-file text-4xl text-primary"></i>
+                                        <span class="block font-semibold text-900 text-lg mt-3">Drop or select images</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 border-round" *ngIf="images.length">
+                                        <div
+                                            *ngFor="let file of images; let i = index"
+                                            class="h-full relative w-7rem h-7rem border-3 border-transparent border-round hover:bg-primary transition-duration-100 cursor-auto"
+                                            (mouseenter)="onImageMouseOver(file)"
+                                            (mouseleave)="onImageMouseLeave(file)"
+                                            style="padding: 1px"
+                                        >
+                                            <img [src]="file.objectURL" class="w-full h-full border-round shadow-2" [alt]="file.name" />
+                                            <button
+                                                [id]="file.name"
+                                                #buttonEl
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                icon="pi pi-times"
+                                                class="p-button-rounded p-button-primary text-sm absolute justify-content-center align-items-center cursor-pointer w-2rem h-2rem"
+                                                style="top: -10px; right: -10px; display: none"
+                                                (click)="$event.stopPropagation(); removeImage(file)"
+                                            ></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-template>
+                        </p-fileUpload>
+                        </div>
+
+                        <div class="col-12 lg:col-6 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Prix Initiale <span class="text-red-500">*</span></label>
+
+                    <p-inputNumber  mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100" [(ngModel)]="Article.prix_achat"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Article.prix_achat}" (onInput)="inputChange('prix_achat',$event)"> </p-inputNumber>
+                    <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Article.prix_achat ">Prix Initiale obligatoire .</small>
+
+                        </div>
+                        <div class="col-12 lg:col-6 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Remise</label>
+
+                    <p-inputNumber  mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  [(ngModel)]="Article.remise" (onInput)="inputChange('remise',$event)"> </p-inputNumber>
+                        </div>
+
+
+                        <div class="col-12 lg:col-12 field">
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Prix Vente<span class="text-red-500">*</span> </label>
+
+                    <p-inputNumber  mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  [(ngModel)]="Article.prix_vente" [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Article.prix_vente}" (onInput)="inputChange('prix_vente',$event)"> </p-inputNumber>
+                    <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Article.prix_vente ">Prix de Vente obligatoire .</small>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 w-full lg:w-3 xl:w-4 flex flex-column row-gap-3 mt-4">
+
+                    <div class="border-1 surface-border flex justify-content-between align-items-center py-2 px-3 border-round">
+                        <span class="text-900 font-bold p-3">Afficher </span>
+                        <p-inputSwitch [(ngModel)]="Article.activer" (onChange)="changeSwitch('activer',$event)"></p-inputSwitch>
+                    </div>
+
+                    <div class="border-1 surface-border flex justify-content-between align-items-center py-2 px-3 border-round">
+                        <span class="text-900 font-bold p-3">Publier </span>
+                        <p-inputSwitch [(ngModel)]="Article.publier" (onChange)="changeSwitch('publier',$event)"></p-inputSwitch>
+                    </div>
+
+                    <div class="border-1 surface-border flex justify-content-between align-items-center py-2 px-3 border-round">
+                        <span class="text-900 font-bold p-3">Variations </span>
+                        <p-inputSwitch [(ngModel)]="Article.dimensionner" (onChange)="changeSwitch('dimensionner',$event)"></p-inputSwitch>
+                    </div>
+
+
+
+                    <div class="border-1 surface-border border-round">
+                        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Catégories</span>
+
+                            <div class="p-3">
+
+                            <p-chips [(ngModel)]="CategorieChips" (onRemove)="RemoveCateg($event)"  (ngModelChange)="onChangeChips($event)"></p-chips>
+
+                            </div>
+
+                            <div class="p-3">
+
+                            <p-tree [value]="categories" selectionMode="checkbox"  [(selection)]="selectedFiles1"  selectionMode="checkbox"   (onNodeSelect)="onNodeSelect($event)"  (onNodeUnselect)="UnselectCateg($event)"></p-tree>
+
+                        </div>
+                    </div>
+
+                    <div class="border-1 surface-border border-round">
+                        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Marques</span>
+                        <div class="p-3">
+                            <p-dropdown [options]="marques" optionLabel="nom" [(ngModel)]="Article.marque" [showClear]="true" placeholder="Selectionner Marque" (onChange)="changedMarque($event)"></p-dropdown>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+            </div>
+
+        </p-tabPanel>
+        <p-tabPanel header="Référencement" >
+            <div class="grid p-fluid">
+
+            <div class="col-12 md:col-12">
+
+            <div class="field">
+                <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  >Balise Titre </label>
+                <input id="firstname1" type="text" [(ngModel)]="Article.balise_titre" (input)="inputValueChange('balise_titre',$event)" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </div>
+            <div class="field">
+                <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  >Meta Mot clés </label>
+                <input id="firstname1" type="text" [(ngModel)]="Article.meta_motsCle" (input)="inputValueChange('meta_motsCle',$event)" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </div>
+            <div class="field">
+                <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  >Meta Description </label>
+                <textarea [(ngModel)]="Article.meta_desc" rows="5" cols="30" pInputTextarea (input)="inputValueChange('meta_desc',$event)"></textarea>
+            </div>
+            <div class="field">
+                <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  >URL Simplifiée </label>
+                <input id="firstname1" [(ngModel)]="Article.url_simp"  (input)="inputValueChange('url_simp',$event)" type="text" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+            </div>
+
+
+            </div>
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Dimension"  [disabled]="disableTab">
+            <div class="grid grid-nogutter flex-wrap gap-3 p-fluid">
+                <div class="col-12 lg:col-4">
+                    <div class="border-1 surface-border border-round">
+                        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Attributs</span>
+                        <div class="p-3 ">
+                            <!-- <div class="p-3"> -->
+                                <p-dropdown   [disabled]="disableAttribut" [options]="attributs" [(ngModel)]="selectedAttribut" optionLabel="nom" placeholder="Select a category" (onChange)="AttributChanged($event)"></p-dropdown>
+                            <!-- </div> -->
+                    </div>
+                    </div>
+
+                    <div class="border-1 surface-border border-round mt-3">
+                        <span class="text-900 font-bold block border-bottom-1 surface-border p-3">Couleurs</span>
+                        <div class="p-3 flex">
+                            <div *ngFor="let color of colorOptions" class="w-2rem h-2rem mr-2 border-1 surface-border border-circle cursor-pointer flex justify-content-center align-items-center"
+                              [style.background-color]="color.background"
+                              (click)="onColorSelect(color)">
+                                <i class="pi pi-check text-sm text-white" *ngIf="selectedColors.indexOf(color) !== -1"></i>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <div class="flex-1 w-full lg:w-3 xl:w-4 flex flex-column row-gap-3">
+
+                    <p-table [value]="selectedColors" styleClass="p-datatable-gridlines" [tableStyle]="{ 'min-width': '50rem' }">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th class="th-name">Couleur/Valeurs Attribut</th>
+
+                                <ng-container *ngFor="let val of AttributValues" >
+                                <th class="custom-column">{{val.valeur}}</th>
+                            </ng-container>
+
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-color >
+                            <!-- <ng-container *ngFor="let val of AttributValues" > -->
+
+                            <tr  >
+                                <td class="custom-column"> {{color.name}}</td>
+                                <ng-container *ngFor="let val of AttributValues">
+                                    <!-- <td
+                                     (click)="onTdClick($event,val,color)" class
+                                     [style.backgroundColor]="selectedTd ? '#E2E8F0' : 'white'">
+                                     <span *ngIf="selectedTd" ><i class="pi pi-check icon"></i></span>
+
+                                    </td> -->
+                                    <td
+                                    (click)="onTdClick($event, val, color)"
+                                    [style.backgroundColor]="isSelectedTd(val, color) ? '#E2E8F0' : 'white'"
+                                >
+                                    <span *ngIf="isSelectedTd(val, color)"><i class="pi pi-check icon"></i></span>
+                                </td>
+
+                                </ng-container>
+                            </tr>
+                        <!-- </ng-container> -->
+                        </ng-template>
+                    </p-table>
+
+
+                </div>
+                <!-- <button pButton pRipple type="button" label="Sauvegarder"  tooltipPosition="bottom" class=" p-button-outlined text-blue-800 mr-2 mb-2"></button> -->
+
+            </div>
+        </p-tabPanel>
+        <p-tabPanel header="Image" >
+            <div class="grid p-fluid">
+
+            <div class="col-12 md:col-12">
+
+                <p-accordion>
+                    <p-accordionTab header="Produit" [selected]="false" class="line-height-3 m-0">
+                        <div class="col-12 lg:col-2">
+
+                        <button pButton pRipple icon="pi pi-plus" label="Ajouter image principale" class=" p-button "  (click)="AjouterImages('Article')"></button>
+                        </div>
+                        <!-- <div class="col-12 lg:col-8">
+
+                        <p-fileUpload
+                                #fileUploader
+                                name="demo[]"
+                                url="./upload.php"
+                                (onUpload)="onUpload($event)"
+                                [customUpload]="true"
+                                [multiple]="true"
+                                (onSelect)="onUpload($event)"
+                                accept="image/*"
+                                [showUploadButton]="false"
+                                [showCancelButton]="false"
+                                [auto]="true"
+
+                                styleClass="border-1 surface-border surface-card p-0 border-round mb-4"
+                            >
+                                <ng-template pTemplate="content">
+                                    <div class="h-20rem m-1 border-round">
+                                        <div *ngIf="!image" class="flex flex-column w-full h-full justify-content-center align-items-center cursor-pointer" (click)="fileUploader.advancedFileInput.nativeElement.click()">
+                                            <i class="pi pi-fw pi-file text-4xl text-primary"></i>
+                                            <span class="block font-semibold text-900 text-lg mt-3">Drop or select a cover image</span>
+                                        </div>
+                                        <div *ngIf="image" class="w-full h-full relative border-round p-0">
+                                            <img [src]="image.objectURL" class="w-full h-full border-round" alt="blog cover" />
+                                            <button
+                                                pButton
+                                                pRipple
+                                                type="button"
+                                                icon="pi pi-times"
+                                                class="p-button-rounded p-button-primary text-sm absolute justify-content-center align-items-center"
+                                                style="top: -10px; right: -10px"
+                                                (click)="$event.stopPropagation(); removeImage()"
+                                            ></button>
+                                        </div>
+                                    </div>
+                                </ng-template>
+                            </p-fileUpload>
+                            </div> -->
+
+                    </p-accordionTab>
+                    <p-accordionTab header="Variations" class="line-height-3 m-0" [disabled]="ImageVariation" (click)="OpenVariationTab()">
+                        <p-table [value]="VariationsArray" *ngIf="submitted || update" dataKey="color.name" [tableStyle]="{ 'min-width': '60rem' }">
+                            <ng-template pTemplate="header">
+                                <tr>
+                                    <th style="width: 5rem"></th>
+                                    <th pSortableColumn="name">Couleur <p-sortIcon field="name"></p-sortIcon></th>
+                                    <th>Code Couleur</th>
+                                    <th pSortableColumn="price">Visualiser <p-sortIcon field="price"></p-sortIcon></th>
+                                    <th pSortableColumn="price">Activé <p-sortIcon field="price"></p-sortIcon></th>
+                                    <th pSortableColumn="category">Action <p-sortIcon field="category"></p-sortIcon></th>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="body" let-variationItem let-expanded="expanded">
+                                <tr>
+                                    <td>
+                                        <button type="button" pButton pRipple [pRowToggler]="variationItem" class="p-button-text p-button-rounded p-button-plain" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></button>
+                                    </td>
+                                    <td>{{ variationItem.color.name }}</td>
+                                    <td>{{ variationItem.color.background }}</td>
+                                    <td><div  class="w-2rem h-2rem mr-2 border-1 surface-border border-circle cursor-pointer flex justify-content-center align-items-center"
+                                        [style.background-color]="variationItem.color.background" >
+                                      </div></td>
+                                      <td>
+                                        <p-inputSwitch [(ngModel)]="variationItem.couleur_image.activer"></p-inputSwitch>
+                                    </td>
+                                    <td>
+                                        <p-menu #menu  [model]="menuItemsCouleurVariation" [popup]="true"  [appendTo]="'body'"  (onShow)="menuOnShow(variationItem)"></p-menu>
+                                        <button pButton  type="button" icon="pi pi-ellipsis-v" pTooltip="" tooltipPosition="bottom"  class=" p-button-text" (click)="menu.toggle($event)"></button>
+
+                                    </td>
+
+                                </tr>
+                            </ng-template>
+                            <ng-template pTemplate="rowexpansion" let-variationItem>
+                                <tr>
+                                    <td colspan="7">
+                                        <div class="p-3">
+                                            <p-table [value]="variationItem.vals" dataKey="code_barre">
+                                                <ng-template pTemplate="header">
+                                                    <tr>
+                                                        <th pSortableColumn="id">Produit <p-sortIcon field="price"></p-sortIcon></th>
+                                                        <th pSortableColumn="id">Code a Barre <p-sortIcon field="price"></p-sortIcon></th>
+
+                                                        <th pSortableColumn="customer">Images <p-sortIcon field="customer"></p-sortIcon></th>
+                                                        <th pSortableColumn="date">Attribut <p-sortIcon field="date"></p-sortIcon></th>
+                                                        <th pSortableColumn="amount">Quantité <p-sortIcon field="amount"></p-sortIcon></th>
+                                                        <th pSortableColumn="status">Prix Initiale <p-sortIcon field="status"></p-sortIcon></th>
+                                                        <th pSortableColumn="status">Prix Vente <p-sortIcon field="status"></p-sortIcon></th>
+                                                        <th pSortableColumn="status">Activé <p-sortIcon field="status"></p-sortIcon></th>
+
+                                                        <th style="width: 4rem">Action</th>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="body" let-valeur>
+                                                    <tr>
+                                                        <td>{{ valeur.article }}</td>
+                                                        <td>{{ valeur.code_barre }}</td>
+                                                        <td>  <ng-container *ngIf="valeur?.couleur_image?.col_images?.length > 0">
+                                                            <ng-container *ngFor="let image of valeur.couleur_image.col_images; let i = index">
+                                                                <img *ngIf="i < 2" [src]="image.name" alt="Image" class="w-2rem">
+                                                                <span *ngIf="i === 1 && valeur.couleur_image.col_images.length > 2">..+{{ valeur.couleur_image.col_images.length - 2 }}</span>
+                                                            </ng-container>
+                                                        </ng-container></td>
+                                                        <td>{{ valeur.attribut_value.valeur }}</td>
+                                                        <td>{{ valeur.stock }}</td>
+                                                        <td>{{ valeur.prix_achat }}</td>
+                                                        <td>{{ valeur.prix_vente }}</td>
+                                                        <td>
+                                                            <p-inputSwitch [(ngModel)]="valeur.activer" ></p-inputSwitch>
+                                                        </td>
+
+                                                        <td>
+
+                                                            <p-menu #menu [popup]="true" [model]="menuItems" [appendTo]="'body'"  ></p-menu>
+                                                            <button pButton  type="button" icon="pi pi-ellipsis-v" pTooltip="" tooltipPosition="bottom"  class=" p-button-text" (click)="menu.toggle($event);updateVariationData(valeur)"></button>
+                    </td>
+                                                    </tr>
+                                                </ng-template>
+                                                <ng-template pTemplate="emptymessage">
+                                                    <tr>
+                                                        <td colspan="6">Pas de Variations pour cette couleur</td>
+                                                    </tr>
+                                                </ng-template>
+                                            </p-table>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </ng-template>
+                        </p-table>
+
+                    </p-accordionTab>
+
+                </p-accordion>
+
+
+
+
+            </div>
+            </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Associé" >
+            <!-- <div class="grid p-fluid"> -->
+
+            <div class="col-12 md:col">
+
+                <p-listbox
+                [options]="articleAssicie"
+                [(ngModel)]="selectedItems"
+                [selectAll]="selectAll"
+                optionLabel="nom_article"
+                [style]="{ width: '15rem' }"
+                [virtualScroll]="false"
+                [filter]="true"
+                [multiple]="true"
+                [checkbox]="true"
+                [showToggleAll]="false"
+                [metaKeySelection]="false"
+                [showToggleAll]="true"
+                (onSelectAllChange)="onSelectAllChange($event)"
+                (onChange)="onChange($event)"
+                [listStyle]="{ 'max-height': '220px' }"
+            >
+            <ng-template let-article pTemplate="item">
+                <div class="flex align-items-center gap-2">
+                    <img [src]="article.image.name"  style="width: 18px"/>
+                    <div>{{ article.nom_article }}</div>
+                </div>
+            </ng-template></p-listbox>
+            <!-- </div> -->
+            </div>
+        </p-tabPanel>
+
+
+    </p-tabView>
+
+</div>
+<app-modifier-variation (VariationToSend)="receiveVariationFromChild($event)"></app-modifier-variation>
+<app-ajouter-images [data]="changed"  [changedList]="changedListParent"   (sendImageToParent)="onReceiveData($event)"></app-ajouter-images>
+
+<p-dialog [(visible)]="ConfirmDialog" header="Confirm" [modal]="true" [style]="{ width: '450px' }">
+    <div class="flex align-items-center justify-content-center">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem"></i>
+        <span>Êtes-vous sûr(e) de vouloir Sauvegarder les variations selectionner?</span>
+    </div>
+    <ng-template pTemplate="footer">
+        <button pButton pRipple icon="pi pi-times" class="p-button-text" label="Non" (click)="responseConfirm('Non')"></button>
+        <button pButton pRipple icon="pi pi-check" class="p-button-text" label="Oui" (click)="responseConfirm('Oui')"></button>
+    </ng-template>
+</p-dialog>

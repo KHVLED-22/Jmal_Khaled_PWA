@@ -1,0 +1,558 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card ">
+            <p-toast></p-toast>
+            <div class="card border-1 surface-border ">
+                <div class="flex-column">
+
+                    
+                    <!-------------------------- Tab View ------------------------->
+                    
+                    <div *ngIf="showFilters" class="p-fluid fadein animation-duration-200 ">
+                        <p-tabView class="py-0 px-0 ">
+                            
+                            <!-------------------------- Panel 1 ------------------------->
+                            
+                            <p-tabPanel header="Filtres">
+                                <div class="p-formgrid grid mt-1">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                      <label class="ml-2 mt-2" for="filterLogic">Choisir le type de filtrage :</label>
+                                      <p-radioButton 
+                                        name="filterLogic" 
+                                        value="AND" 
+                                        class="ml-2"
+                                        [(ngModel)]="filterLogic" 
+                                        label="ET">
+                                      </p-radioButton>
+                                      <p-radioButton 
+                                        name="filterLogic" 
+                                        value="OR" 
+                                        class="ml-2"
+                                        [(ngModel)]="filterLogic" 
+                                        label="OU">
+                                      </p-radioButton>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="p-formgrid grid mt-1">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                      <p-multiSelect 
+                                        [options]="filteredDepartements" 
+                                        [(ngModel)]="selectedDep"
+                                        optionLabel="nom" 
+                                        placeholder="Select departements"
+                                        (onChange)="filterEquipesfordep()">
+                                      </p-multiSelect>
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                      <p-multiSelect 
+                                        [options]="filteredEquipesdep" 
+                                        [(ngModel)]="selectedequipes"
+                                        optionLabel="nom" 
+                                        placeholder="Select equipe">
+                                      </p-multiSelect>
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                      <p-multiSelect 
+                                        [options]="Etabs" 
+                                        [(ngModel)]="selectedEtablissement"
+                                        optionLabel="name" 
+                                        placeholder="Select Etablissement">
+                                      </p-multiSelect>
+                                    </div>
+                                  </div>
+                                  
+                                  <div class="p-formgrid grid px-3 py-3">
+                                    <div class="field col px-1 py-1 md:col-fixed">
+                                      <button pButton pRipple 
+                                        type="button" 
+                                        label="Filtrer" 
+                                        (click)="filter()" 
+                                        icon="pi pi-filter"
+                                        class="p-button bg-blue-800 border-blue-800 mr-2">
+                                      </button>
+                                    </div>
+                                  </div>
+
+                        
+                                <!-- <div class="p-formgrid grid">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="name1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="email1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-dropdown optionLabel="name" [filter]="true" filterBy="name"
+                                            [showClear]="true" placeholder="Selectionner une valeur">
+                                            <ng-template pTemplate="selectedItem">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                            <ng-template pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                </div> -->
+                                <!-- <div class="p-formgrid grid">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="name1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="email1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-dropdown optionLabel="name" [filter]="true" filterBy="name"
+                                            [showClear]="true" placeholder="Selectionner une valeur">
+                                            <ng-template pTemplate="selectedItem">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                            <ng-template pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+
+                                </div> -->
+                            </p-tabPanel>
+
+                            <!-------------------------- Panel 1 ------------------------->
+
+                            <!-------------------------- Panel 2 ------------------------->
+
+                            <p-tabPanel header="Configuration">
+                                <div class="p-formgrid grid mt-1">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <!-- <p-scroller [items]="SelectedCols" [itemSize]="50" orientation="horizontal"
+                                            styleClass="border-1 surface-border"
+                                            [style]="{ 'width': '80%', 'height': '300px', 'overflow': 'auto' }">
+                                            <ng-template pTemplate="item" let-col let-options="options">
+                                                <div class="formgrid grid mt-3"
+                                                    [ngClass]="{ 'surface-ground' : options.odd }"
+                                                    style="height: 50px; display: table-row;">
+                                                    <div style="display: table-cell; padding-left: 20px;">
+                                                        <label>{{ col.header }} Width:</label>
+                                                    </div>
+                                                    <div style="display: table-cell; padding-left: 10px;">
+                                                        <p-inputNumber [(ngModel)]="col.width" mode="decimal" [min]="0"
+                                                            [max]="100"></p-inputNumber>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-scroller> -->
+                                    </div>
+                                    <div class="formgrid grid mt-1">
+                                        <p-multiSelect [options]="Cols" [(ngModel)]="SelectedCols" optionLabel="header"
+                                            [filter]="true"
+                                            [style]="{ 'max-width': '300px', 'min-width': '250px' }"></p-multiSelect>
+                                    </div>
+                                </div>
+                            </p-tabPanel>
+
+                            <!-------------------------- Panel 2 ------------------------->
+
+                            
+                        </p-tabView>
+                    </div>
+
+                    <!-------------------------- Tab View ------------------------->
+
+
+                    <!-------------------------- buttons ------------------------->
+
+
+                    <div class=" grid   mt-0">
+                        <div class="px-0 py-0 col">
+                            <div class="row">
+                                <h5 *ngIf="showdate" class="ml-3 mt-3">Date de filtrage : {{ formatDate(showdate[0], 'date') }} - {{
+                                    formatDate(showdate[1], 'date') }}</h5>
+                                <h5 *ngIf="!showdate" class="ml-3 mt-3">Aujourd'hui : {{ formatDate(date, 'date') }}
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="px-0 py-0 col flex justify-content-end flex-wrap">
+                        <button  pButton pRipple label="Ajouter" (click)="visible = true ;  employee = {} ; activeIndex = 0"  icon="pi pi-plus" class="p-button-success fixed-height mr-2 mb-2" ></button>
+                            <button pButton pRipple [icon]="!showFilters ? 'pi pi-chevron-down' : 'pi pi-chevron-up'" pTooltip="Filter" tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"
+                                (click)="showfilter()"></button>
+                            <button pButton pRipple type="button" icon="pi pi-upload" pTooltip="Export"
+                                tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"></button>
+                                <button pButton pRipple type="button" icon="pi pi-download" pTooltip="Importer CSV"
+                                tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"
+                                (click)="fileInput.click()"></button>
+                        
+                        <input type="file" #fileInput accept=".csv" style="display: none;" />
+                        
+                            <button pButton pRipple type="button" icon="pi pi-fw pi-refresh" pTooltip="Refresh"
+                                (click)="reset()" tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"></button>
+                        </div>
+                    </div>
+
+                    <!-------------------------- buttons ------------------------->
+                </div>
+            </div>
+
+            <!-------------------------- table ------------------------->
+
+            <p-table #dataTable [paginator]="true" [value]="employees" [columns]="SelectedCols"
+                [tableStyle]="{'min-width': '60rem'}" [rows]="10" sortMode="single" responsiveLayout="stack"
+                [loading]="loading" scrollHeight="flex" dataKey="id" [lazy]="true" [totalRecords]="totalRecords"
+                (onLazyLoad)="onLazyLoad($event)" [rowsPerPageOptions]="[10 , 20 , 50,100]">
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th></th>
+                        <th *ngFor="let col of columns" [style.width.%]="col.width"
+                        [pSortableColumn]="col.sortable ? col.field : null">
+                        <div class="header-text">
+                            {{ col.header }}
+                            <p-sortIcon *ngIf="col.sortable" field="{{ col.field }}"></p-sortIcon>
+                        </div>
+                    </th>
+                    <th>Action</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-pointage let-rowIndex="rowIndex">
+                    <tr>
+                       <td>
+                        <img 
+                        [src]="pointage.photo ? 'https://rh.cegidretail.shop'+pointage.photo : defaultImageUrl" 
+                        class="w-2rem mr-2 circular-image" 
+                      />
+                       </td> 
+                        <td *ngFor="let col of SelectedCols" >
+                            <ng-container
+                                *ngIf="col.field !== 'date_embauche' && col.field !== 'poste.titre' && col.field !== 'pointage'">
+                                {{ pointage[col.field] }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'date_embauche'">
+                                {{ formatDate ( pointage[col.field] , 'date') }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'poste.titre' && pointage.poste ">
+                                {{ pointage.poste.titre}}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'departement.nom' &&  pointage.departement">
+                                {{ pointage.departement.nom}}
+                            </ng-container>
+                </td>
+                <td style="width: 14%; min-width: 10rem">
+
+                    <p-menu #menu [popup]="true" [model]="menuItems" [appendTo]="'body'"  (onShow)="menuOnShow(pointage)"></p-menu>
+                    <button pButton  type="button" icon="pi pi-ellipsis-v" pTooltip="" tooltipPosition="bottom"  class=" p-button-text" (click)="menu.toggle($event)"></button>
+
+                </td>
+
+                <!-- <td><p-button icon="pi pi-pencil" [rounded]="true" severity="success" [outlined]="true"
+                    (onClick)="visible = true ; employee = pointage ; activeIndex = 0 " /></td>
+                    <td><p-button icon="pi pi-file" [rounded]="true" severity="warning" [outlined]="true"
+                        (onClick)=" openDocument(pointage)" /></td>
+                        <td><p-button icon="pi pi-ticket" [rounded]="true" severity="help" [outlined]="true"
+                            (onClick)="Addmachine = true ; getusermachine(pointage)"/></td> -->
+                </tr>
+                </ng-template>
+            </p-table>
+
+            <!-------------------------- Ajoute Pointage Dialog ----------------------->
+
+            <p-dialog header="Employee" [modal]="true" [(visible)]="visible"
+            [style]="{ minWidth: '40%', maxWidth: '90vw', width: 'auto', height: 'auto' }">
+            <p-steps [model]="items" [readonly]="true" [(activeIndex)]="activeIndex" class="mb-5"></p-steps>
+                            <div *ngIf="activeIndex === 0">
+                              
+                                <div class="flex flex-wrap gap-3 mt-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="nom" class="font-semibold w-6rem">Nom*</label>
+                                        <input id="nom" type="text" pInputText [(ngModel)]="employee.nom" placeholder="Nom" />
+                                    </div>
+                                    <div class="flex align-items-center gap-3 ml-6 mb-3">
+                                        <label for="prenom" class="font-semibold w-6rem">Prénom*</label>
+                                        <input id="prenom" type="text" pInputText [(ngModel)]="employee.prenom" placeholder="Prénom" />
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-3 mt-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="tel" class="font-semibold w-6rem">Téléphone*</label>
+                                        <input id="tel" type="text" pInputText [(ngModel)]="employee.tel" placeholder="Téléphone" />
+                                    </div>
+                                    <div class="flex align-items-center gap-3 ml-6 mb-3">
+                                        <label for="date_embauche" class="font-semibold w-6rem" >Date de naissance*</label>
+                                        <p-calendar [(ngModel)]="employee.date_naissance" [appendTo]="'body'" [showIcon]="true" inputId="date_embauche" placeholder="Date d'embauche"></p-calendar>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-8 mt-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="sexe" class="font-semibold w-6rem">Sexe*</label>
+                                        <p-dropdown [options]="sexes" [(ngModel)]="employee.sexe" [appendTo]="'body'" placeholder="Select sexe"></p-dropdown>
+                                      </div>
+                                    <div class="flex align-items-center ml-6 gap-3 mb-3">
+                                        <label for="etat_civil" class="font-semibold w-6rem">État civil*</label>
+                                        <p-dropdown [options]="etatCivils" [(ngModel)]="employee.etat_civil" [appendTo]="'body'"  placeholder="Select état civil"></p-dropdown>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-3 mt-4 mb-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="nombre_enfant" class="font-semibold w-6rem">Nombre d'enfants*</label>
+                                        <input id="nombre_enfant" type="number" pInputText [(ngModel)]="employee.nombre_enfant" placeholder="Nombre d'enfants" />
+                                    </div>
+                                    <div class="flex align-items-center gap-3 ml-6 mb-3">
+                                        <label for="matricule_cnss" class="font-semibold w-6rem">Matricule CNSS*</label>
+                                        <input id="matricule_cnss" type="text" pInputText [(ngModel)]="employee.matricule_cnss" placeholder="Matricule CNSS" />
+                                    </div>
+                                </div>
+                                </div>
+                                <div *ngIf="activeIndex === 1">
+                                    <div class="flex flex-wrap gap-3 mt-4">
+                                      <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="societe" class="font-semibold w-6rem">Societe*</label>
+                                        <p-autoComplete [(ngModel)]="employee.societe" 
+                                                        [suggestions]="filteredSocietes" 
+                                                        [appendTo]="'body'" 
+                                                        (completeMethod)="filterSocietes($event)" 
+                                                        field="nom" 
+                                                        placeholder="Select Societe" 
+                                                        [dropdown]="true"></p-autoComplete>
+                                      </div>
+                                      <div class="flex align-items-center gap-3 ml-6 mb-3">
+                                        <label for="departement" class="font-semibold w-6rem">Département*</label>
+                                        <p-autoComplete [(ngModel)]="employee.departement" 
+                                                        [suggestions]="filteredDepartements" 
+                                                        [appendTo]="'body'" 
+                                                        (completeMethod)="filterDepartements($event)" 
+                                                        (onSelect)="onDepartementSelect($event)"
+                                                        field="nom" 
+                                                        placeholder="Select Département" 
+                                                        [dropdown]="true"></p-autoComplete>
+                                      </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 mt-4">
+                                        <div class="flex align-items-center gap-3 mb-3">
+                                            <label for="equipe" class="font-semibold w-6rem">Equipe*</label>
+                                            <p-autoComplete [(ngModel)]="employee.equipe"
+                                                            [suggestions]="filteredEquipes"
+                                                            [appendTo]="'body'"
+                                                            (completeMethod)="filterEquipes($event)"
+                                                            field="nom"
+                                            
+                                                            placeholder="Select Equipe"
+                                                            [dropdown]="true"></p-autoComplete>
+                                          </div>
+                                      <div class="flex align-items-center gap-3 ml-6 mb-3">
+                                        <label for="etablissement" class="font-semibold w-6rem">Etablissement*</label>
+                                        <p-autoComplete [(ngModel)]="employee.etablissement" 
+                                                        [suggestions]="filteredEtabs" 
+                                                        [appendTo]="'body'" 
+                                                        (completeMethod)="filterEtabs($event)" 
+                                                        field="name" 
+                                                        placeholder="Select Etablissement" 
+                                                        [dropdown]="true"></p-autoComplete>
+                                       
+                                      </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-3 mt-4">
+                                      <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="poste" class="font-semibold w-6rem">Poste*</label>
+                                        <p-autoComplete [(ngModel)]="employee.poste" 
+                                                        [suggestions]="filteredPostes"  
+                                                        [appendTo]="'body'" 
+                                                        (completeMethod)="filterPostes($event)" 
+                                                        field="titre" 
+                                                  
+                                                        placeholder="Select Poste" 
+                                                        [dropdown]="true"></p-autoComplete>
+                                                        
+                                      </div>
+                                      <div class="flex align-items-center gap-3 ml-6 mb-3">
+                                        <label for="sup_hierarchique" class="font-semibold w-6rem">Supérieure hiérarchique</label>
+                                        <p-autoComplete [(ngModel)]="employee.sup_hierarchique" 
+                                                        [suggestions]="filteredUsers" 
+                                                        [appendTo]="'body'" 
+                                                        (completeMethod)="filterUsers($event)" 
+                                                        field="username" 
+                                                        placeholder="Select Supérieure hiérarchique" 
+                                                        [dropdown]="true"></p-autoComplete>
+                                      </div>
+                                    </div>
+                                    <div class="flex flex-wrap gap-8 mt-4 mb-4">
+                                        <div class="flex align-items-center gap-3 mb-3">
+                                            <label for="email" class="font-semibold w-6rem">Email*</label>
+                                            <input id="email" type="email" pInputText [(ngModel)]="email" placeholder="Email" />
+                                          </div>
+                                      <div class="flex align-items-center gap-3 ml-5 mb-3">
+                                        <label for="email" class="font-semibold w-6rem">Numero professionnel*</label>
+                                        <input id="numpro" type="text" pInputText [(ngModel)]="employee.tel_professionnel" placeholder="Numero Professional"/>
+                                      </div>
+                                    </div>
+                                  </div>
+                            <div *ngIf="activeIndex === 2">
+                                <!-- HR Parameters -->
+                                <!-- <h3>Paramètre RH</h3> -->
+                                <div class="flex flex-wrap gap-3 mt-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="nom" class="font-semibold w-6rem">Type de contract*</label>
+                                        <p-autoComplete [(ngModel)]="employee.type_contrat" 
+                                        [suggestions]="filteredcontrats" 
+                                        [appendTo]="'body'" 
+                                        (completeMethod)="filterContract($event)" 
+                                        field="nom" 
+                                        placeholder="Select type de contract"
+                                        [dropdown]="true"></p-autoComplete>
+                                    </div>
+                                    
+                                </div>
+                                <div class="flex flex-wrap gap-3 mt-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="tel" class="font-semibold w-6rem">Date d'embauche*</label>
+                                        <p-calendar [(ngModel)]="employee.date_embauche" [appendTo]="'body'" [showIcon]="true" inputId="date_embauche" placeholder="Date d'embauche"></p-calendar>
+                                    </div>
+                                   
+                                </div>
+                                <div class="flex flex-wrap gap-8 mt-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="sexe" class="font-semibold w-6rem">Régime horaire*</label>
+                                        <p-autoComplete [(ngModel)]="employee.regime_horaire" 
+                                        [suggestions]="filteredplanings" 
+                                        [appendTo]="'body'" 
+                                        (completeMethod)="filterPlan($event)" 
+                                        field="nom" 
+                                        placeholder="Select Régime horaire" 
+                                        [dropdown]="true"></p-autoComplete>
+                                    </div>
+                                </div>
+                                <div class="flex flex-wrap gap-3 mt-4 mb-4">
+                                    <div class="flex align-items-center gap-3 mb-3">
+                                        <label for="nombre_enfant" class="font-semibold w-6rem">Régime conge*</label>
+                                        <input [disabled]="true" id="nombre_enfant" type="number" pInputText placeholder="Congé" />
+                                    </div>
+                                </div>
+                            </div>
+                           
+                          
+                            <div class="flex justify-content-end gap-2">
+                                <p-button label="Précédent" icon="pi pi-chevron-left" (click)="onPrevious()" [disabled]="activeIndex === 0"></p-button>
+                                <p-button label="Suivant" icon="pi pi-chevron-right" (click)="onNext()" [disabled]="activeIndex === items.length - 1"></p-button>
+                                <p-button label="Soumettre" icon="pi pi-check" (click)="onSubmit()" [disabled]="activeIndex !== items.length - 1"></p-button>
+                            </div> 
+            </p-dialog>
+
+              <!-------------------------- Document Dialog ----------------------->
+
+
+            <p-dialog header="Document" [modal]="true" [(visible)]="documentDialog"
+            [style]="{ width: '40%' }">
+            <div class="p-fluid">
+                <div class="flex align-items-center gap-3 mb-3 mt-3">
+                  <label for="photo" class="font-semibold w-6rem">Photo*</label>
+                  <p-fileUpload name="files" chooseLabel="Choose Photo" mode="advanced" accept="image/*" [maxFileSize]="1000000"
+                    accept=".png,.jpg,.jpeg,.webp" styleClass="custom-file-upload" url="https://rh.cegidretail.shop/api/upload"
+                    (onUpload)="onUpload('photo',$event)" (onSelect)="onFileSelect($event, 'photo')" (onRemove)="onFileRemove('photo')">
+                    <ng-template pTemplate="content">
+                      <ul *ngIf="documentData.attributes?.photo?.data?.length">
+                        <li *ngFor="let file of documentData.attributes?.photo?.data; let i = index">
+                          {{ file.attributes?.name }}
+                        </li>
+                      </ul>
+                    </ng-template>
+                  </p-fileUpload>
+                </div>
+              
+                <div class="flex align-items-center gap-3 mb-3 mt-3">
+                  <label for="cinRecto" class="font-semibold w-6rem">CIN Recto*</label>
+                  <p-fileUpload  name="files" chooseLabel="Choose CIN Recto" mode="advanced" accept="image/*" [maxFileSize]="1000000" accept=".png,.jpg,.jpeg,.webp"
+                    url="https://rh.cegidretail.shop/api/upload" (onSelect)="onFileSelect($event, 'cinRecto')"  (onUpload)="onUpload('cin_recto',$event)"
+                    (onRemove)="onFileRemove('cinRecto')">
+                    <ng-template pTemplate="content">
+                      <ul *ngIf="documentData.attributes?.cin_recto?.data?.length">
+                        <li *ngFor="let file of documentData.attributes?.cin_recto?.data; let i = index">
+                          {{ file.attributes?.name }}
+                        </li>
+                      </ul>
+                    </ng-template>
+                  </p-fileUpload>
+                </div>
+              
+                <div class="flex align-items-center gap-3 mb-3 mt-3">
+                  <label for="cinVerso" class="font-semibold w-6rem">CIN Verso*</label>
+                  <p-fileUpload  name="files" chooseLabel="Choose CIN Verso" mode="advanced" accept="image/*" [maxFileSize]="1000000"  (onUpload)="onUpload('cin_verso',$event)"
+                    url="https://rh.cegidretail.shop/api/upload" (onSelect)="onFileSelect($event, 'cinVerso')"
+                    (onRemove)="onFileRemove('cinVerso')">
+                    <ng-template pTemplate="content">
+                      <ul *ngIf="documentData.attributes?.cin_verso?.data?.length">
+                        <li *ngFor="let file of documentData.attributes?.cin_verso?.data; let i = index">
+                          {{ file.attributes?.name }}
+                        </li>
+                      </ul>
+                    </ng-template>
+                  </p-fileUpload>
+                </div>
+              
+                <div class="flex align-items-center gap-3 mb-3 mt-3">
+                  <label for="rib" class="font-semibold w-6rem">RIB*</label>
+                  <p-fileUpload  name="files" chooseLabel="Choose RIB" mode="advanced" accept="image/*" [maxFileSize]="1000000"  (onUpload)="onUpload('rib',$event)"
+                    url="https://rh.cegidretail.shop/api/upload" (onSelect)="onFileSelect($event, 'rib')"
+                    (onRemove)="onFileRemove('rib')">
+                    <ng-template pTemplate="content">
+                      <ul *ngIf="documentData.attributes?.rib?.data?.length">
+                        <li *ngFor="let file of documentData.attributes?.rib?.data; let i = index">
+                          {{ file.attributes?.name }}
+                        </li>
+                      </ul>
+                    </ng-template>
+                  </p-fileUpload>
+                </div>
+              </div>
+            
+        </p-dialog>
+
+        <p-dialog header="Ajout machine" [modal]="true" [(visible)]="Addmachine"
+                [style]="{ width: '25rem' }">
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="matricule_cnss" class="font-semibold w-6rem">ID :</label>
+                    <label for="matricule_cnss" class="font-semibold w-6rem">{{employee.id}}</label>
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="matricule_cnss" class="font-semibold w-6rem">User ID*</label>
+                    <input id="matricule_cnss" type="text" pInputText [(ngModel)]="usermachine.userID" placeholder="User ID" />
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="etablissement" class="font-semibold w-6rem">Machine</label>
+                    <p-autoComplete [(ngModel)]="usermachine.machine" 
+                                    [suggestions]="filteredmachines" 
+                                    [appendTo]="'body'"
+                                    (completeMethod)="filterMachine($event)" 
+                                    field="name" 
+                                    placeholder="Select machine"
+                                    [dropdown]="true"></p-autoComplete>
+                  </div>
+                <div class="flex justify-content-around mt-4">
+                    <p-button severity="secondary" label="Annuler" icon="pi pi-times" class="p-button-secondary"
+                        (click)="confirmDeleteVisible = false"></p-button>
+                    <p-button label="Confirmer" icon="pi pi-check" (click)="addmachine()"></p-button>
+                </div>
+            </p-dialog>
+
+
+            <!-------------------------- Delete Pointage Dialog ----------------------->
+
+            <p-dialog header="Supprimer pointage" [modal]="true" [(visible)]="confirmDeleteVisible"
+                [style]="{ width: '25rem' }">
+                <div class="text-center">
+                    <p>Êtes-vous sûr de vouloir supprimer ?</p>
+                </div>
+                <div class="flex justify-content-around mt-4">
+                    <p-button severity="secondary" label="Annuler" icon="pi pi-times" class="p-button-secondary"
+                        (click)="confirmDeleteVisible = false"></p-button>
+                    <p-button label="Confirmer" icon="pi pi-check" (click)="deletePointage()"></p-button>
+                </div>
+            </p-dialog>
+        </div>
+    </div>
+</div>

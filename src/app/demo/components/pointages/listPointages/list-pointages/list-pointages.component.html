@@ -1,0 +1,346 @@
+<div class="grid">
+    <div class="col-12">
+            <div class="card border-1 surface-border ">
+            
+            <div class="flex-column">
+        <div class="card ">
+            <p-toast></p-toast>
+            
+
+                     
+                    <!-------------------------- Tab View ------------------------->
+
+                    <div *ngIf="showFilters" class="p-fluid fadein animation-duration-200 ">
+                        <p-tabView class="py-0 px-0 ">
+
+                            <!-------------------------- Panel 1 ------------------------->
+
+                            <p-tabPanel header="Filtres">
+                                <div class="p-formgrid grid mt-1">
+                                    <div class="field col px-1 py-1 md:col-4">
+
+                                        <p-multiSelect [options]="Etabs" [(ngModel)]="selectedEtablissement"
+                                            (onChange)="filterusers($event)" optionLabel="name"
+                                            placeholder="Select etablissement" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-multiSelect [options]="filtredUsers" [(ngModel)]="selectedusers"
+                                            optionLabel="username" placeholder="Select name" />
+                                    </div>
+
+
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-calendar selectionMode="range" placeholder="Selectionner date"
+                                            [(ngModel)]="searchdate" [iconDisplay]="'input'" [showIcon]="true"
+                                            inputId="templatedisplay">
+                                            <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+                                                <i class="pi pi-clock pointer-events-none"
+                                                    (click)="clickCallBack($event)"></i>
+                                            </ng-template>
+                                        </p-calendar>
+                                    </div>
+
+                                    <div class="p-formgrid grid px-3 py-3">
+                                        <div class="field col px-1 py-1 md:col-fixed">
+                                            <button pButton pRipple type="button" label="Filtrer" (click)="filter() "
+                                                [disabled]="loading" icon="pi pi-filter"
+                                                class=" p-button bg-blue-800 border-blue-800 mr-2 "></button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <!-- <div class="p-formgrid grid">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="name1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="email1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-dropdown optionLabel="name" [filter]="true" filterBy="name"
+                                            [showClear]="true" placeholder="Selectionner une valeur">
+                                            <ng-template pTemplate="selectedItem">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                            <ng-template pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+                                </div> -->
+                                <!-- <div class="p-formgrid grid">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="name1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <input pInputText id="email1" type="text" />
+                                    </div>
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-dropdown optionLabel="name" [filter]="true" filterBy="name"
+                                            [showClear]="true" placeholder="Selectionner une valeur">
+                                            <ng-template pTemplate="selectedItem">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                            <ng-template pTemplate="item">
+                                                <div class="flex align-items-center gap-2">
+                                                </div>
+                                            </ng-template>
+                                        </p-dropdown>
+                                    </div>
+
+                                </div> -->
+                            </p-tabPanel>
+
+                            <!-------------------------- Panel 1 ------------------------->
+
+                            <!-------------------------- Panel 2 ------------------------->
+
+                            <p-tabPanel header="Configuration">
+                                <div class="p-formgrid grid mt-1">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <!-- <p-scroller [items]="SelectedCols" [itemSize]="50" orientation="horizontal"
+                                            styleClass="border-1 surface-border"
+                                            [style]="{ 'width': '80%', 'height': '300px', 'overflow': 'auto' }">
+                                            <ng-template pTemplate="item" let-col let-options="options">
+                                                <div class="formgrid grid mt-3"
+                                                    [ngClass]="{ 'surface-ground' : options.odd }"
+                                                    style="height: 50px; display: table-row;">
+                                                    <div style="display: table-cell; padding-left: 20px;">
+                                                        <label>{{ col.header }} Width:</label>
+                                                    </div>
+                                                    <div style="display: table-cell; padding-left: 10px;">
+                                                        <p-inputNumber [(ngModel)]="col.width" mode="decimal" [min]="0"
+                                                            [max]="100"></p-inputNumber>
+                                                    </div>
+                                                </div>
+                                            </ng-template>
+                                        </p-scroller> -->
+                                    </div>
+                                    <div class="formgrid grid mt-1">
+                                        <p-multiSelect [options]="Cols" [(ngModel)]="SelectedCols" optionLabel="header"
+                                            [filter]="true"
+                                            [style]="{ 'max-width': '300px', 'min-width': '250px' }"></p-multiSelect>
+                                    </div>
+                                </div>
+                            </p-tabPanel>
+
+                            <!-------------------------- Panel 2 ------------------------->
+
+                            <p-tabPanel header="Import Pointages">
+                                <div class="p-formgrid grid mt-1">
+                                    <div class="field col px-1 py-1 md:col-4">
+                                        <p-multiSelect [options]="machines" [(ngModel)]="selectedmachines"
+                                            (onChange)="filterMachine($event)" optionLabel="name"
+                                            placeholder="Select Machines" />
+                                    </div>
+                                    <div class="p-formgrid grid px-3 py-3">
+                                        <div class="field col px-1 py-1 md:col-fixed">
+                                            <button pButton pRipple type="button" label="Import" (click)="Importer() "
+                                                [disabled]="loadingData" icon="pi pi-download"
+                                                class=" p-button bg-blue-800 border-blue-800 mr-2 "></button>
+                                        </div>
+                                    </div>
+                                    <!-- <h4>{{ formatDate(syncroDate, 'datetime')}}</h4> -->
+                                </div>
+                            </p-tabPanel>
+
+
+                        </p-tabView>
+                    </div>
+
+                    <!-------------------------- Tab View ------------------------->
+
+
+                    <!-------------------------- buttons ------------------------->
+
+
+                    <div class=" grid   mt-0">
+                        <div class="px-0 py-0 col">
+                            <div class="row">
+                                <h5 *ngIf="showdate" class="ml-3 mt-3">Date de filtrage : {{ formatDate(showdate[0],
+                                    'date') }} - {{
+                                    formatDate(showdate[1], 'date') }}</h5>
+                                <h5 *ngIf="!showdate" class="ml-3 mt-3">Aujourd'hui : {{ formatDate(date, 'date') }}
+                                </h5>
+                            </div>
+                            <div class="row ml-3 mt-2">
+                                <p-checkbox [(ngModel)]="checked" [binary]="true" inputId="binary"
+                                    class="custom-checkbox">
+                                </p-checkbox>
+                                <label for="binary" class="ml-2" style="font-weight: 500;">Présence Irrégulière ou Absence</label>
+                            </div>
+                        </div>
+
+                        <div class="px-0 py-0 col flex justify-content-end flex-wrap">
+                            <button pButton pRipple [icon]="!showFilters ? 'pi pi-search' : 'pi pi-chevron-up'"
+                                pTooltip="Filter" tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"
+                                (click)="showfilter()"></button>
+                            <button pButton pRipple type="button" icon="pi pi-upload" pTooltip="Export" 
+                                [disabled]="loading" tooltipPosition="bottom" (click)="senddata()"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"></button>
+                            <button pButton pRipple type="button" icon="pi pi-download" pTooltip="Importer CSV"
+                                [disabled]="loading" tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"
+                                (click)="fileInput.click()"></button>
+
+                            <input type="file" #fileInput accept=".csv" (change)="importCSV($event)"
+                                style="display: none;" />
+
+                            <button pButton pRipple type="button" icon="pi pi-fw pi-refresh" pTooltip="Refresh"
+                                (click)="reset()" tooltipPosition="bottom"
+                                class="p-button-outlined text-blue-800 fixed-height mr-2 mb-2"></button>
+                        </div>
+                    </div>
+
+                    <!-------------------------- buttons ------------------------->
+                </div>
+            </div>
+
+            <!-------------------------- table ------------------------->   <!--eli fih el affichage des employé fel gestion de pointage --> 
+
+            <p-table #dataTable [paginator]="true" [value]="Pointages" [columns]="SelectedCols"
+                [tableStyle]="{'min-width': '60rem'}" [rows]="10" sortMode="single" responsiveLayout="stack"
+                [loading]="loading" scrollHeight="flex" dataKey="id" [lazy]="true" [totalRecords]="totalRecords"
+                (onLazyLoad)="onLazyLoad($event)" [rowsPerPageOptions]="[10, 20, 50, 100]">
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        <th></th>
+                        <th rowspan="2" *ngFor="let col of columns" [style.width.%]="col.width"
+                            [pSortableColumn]="col.sortable ? col.field : null" [title]="col.header">
+                            <div class="header-text">
+                                {{ col.shortHeader }}
+                                <p-sortIcon *ngIf="col.sortable" field="{{ col.field }}"></p-sortIcon>
+                            </div>
+                        </th>
+                        <!-- <th colspan="5" class="text-center">Horaires</th> -->
+                    </tr>
+                    <tr>
+                        <!-- <th *ngFor="let col of columns.slice(6, 12)" [style.width.%]="col.width"
+                            [pSortableColumn]="col.sortable ? col.field : null" [title]="col.header">
+                            <div class="header-text">
+                                {{ col.shortHeader }}
+                                <p-sortIcon *ngIf="col.sortable" field="{{ col.field }}"></p-sortIcon>
+                            </div>
+                        </th> -->
+                </ng-template>
+
+                <ng-template pTemplate="body" let-pointage let-rowIndex="rowIndex">
+                    <tr>
+                        <td>
+                            <p-button icon="pi pi-plus" [rounded]="true" severity="success" [outlined]="true"
+                                (onClick)="visible = true; addpointage = pointage; addmachine()" /> <!--addpointage eli houni mahiech fn !!!!!!!!!!!!!!!!!!!!!! tableau -->
+                        </td>
+                        <td *ngFor="let col of SelectedCols" [ngClass]="{'highlight-column': checkimpair(pointage)}">
+                            <ng-container
+                                *ngIf="col.field !== 'date' && col.field !== 'user.username' && col.field !== 'nb_heures' && col.field !== '1seance' && col.field !== '2seance' && col.field !== 'etab'&& col.field !== 'temps_sup'&& col.field !== 'nb_heures_manq'&& col.field !== 'skipTime'&& col.field !== 'totalPlanHoursWorked'&& col.field !== 'nb_heures_supp'; else StoreOrOperationField">
+                                {{ pointage[col.field] }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'date'">
+                                {{ formatDate(pointage[col.field], 'date') }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'user.etablissement.name'">
+                                {{ pointage.user.etablissement.name }}
+                            </ng-container>
+                            <ng-template #StoreOrOperationField>
+                                <ng-container *ngIf="col.field === 'user.username'">
+                                    {{ pointage.user.username }}
+                                </ng-container>
+                                <ng-container *ngIf="col.field === 'nb_heures_manq'">
+                                    {{ showHeure(pointage[col.field]) }}
+                                </ng-container>
+                                <ng-container *ngIf="col.field === 'skipTime'">
+                                    {{ showHeure(pointage[col.field]) }}
+                                </ng-container>
+                                <ng-container *ngIf="col.field === 'totalPlanHoursWorked'">
+                                    {{ showHeure(pointage[col.field]) }}
+                                </ng-container>
+                                <ng-container *ngIf="col.field === 'nb_heures_supp'">
+                                    {{ showHeure(pointage[col.field]) }}
+                                </ng-container>
+                                <ng-container *ngIf="col.field === 'nb_heures'">
+                                    {{ showHeure(pointage[col.field]) }}
+                                </ng-container>
+                                <ng-container *ngIf="col.field === 'temps_sup'">
+                                    <p-inputSwitch [(ngModel)]="pointage.temps_sup"
+                                        (onChange)="onTempsSupChange(pointage.id ,$event)"></p-inputSwitch>
+                                </ng-container>
+                                <ng-container *ngIf="col.field === '1seance'">
+                    <tr>
+                        <ng-container *ngFor="let item of fixpointage(pointage, true)"> <!--Calls fixpointage(pointage, true) to get the first two pointages items that are not deleted and sorted by timestamp.-->
+                            <th *ngIf="item.isDeleted == false" class="card" style="color: burlywood; padding: 2px;">
+                                <p-button icon="pi pi-times" [rounded]="true"
+                                    [label]="getTimeFromTimestamp(item.timestamp!)"
+                                    (onClick)="confirmDeleteVisible = true; itemdelete = item"
+                                    [severity]="item.virtuelle ? 'info' : ''" />
+                            </th>
+                        </ng-container>
+                    </tr>
+                    </ng-container>
+                    <ng-container *ngIf="col.field === '2seance'">
+                        <tr>
+                            <ng-container *ngFor="let item of fixpointage(pointage, false)"> <!--Calls fixpointage(pointage, false) to get all pointages items starting from the third one, provided they are not deleted and sorted by timestamp.-->
+                                <th *ngIf="item.isDeleted == false" class="card" style="color: burlywood; padding: 2px;">
+                                    <p-button icon="pi pi-times" [rounded]="true"
+                                        [label]="getTimeFromTimestamp(item.timestamp!)"
+                                        (onClick)="confirmDeleteVisible = true; itemdelete = item"
+                                        [severity]="item.virtuelle ? 'info' : ''" />
+
+                                </th>
+                            </ng-container>
+                        </tr>
+                    </ng-container>
+                </ng-template>
+                </td>
+                </tr>
+                </ng-template>
+            </p-table>
+
+            <!-------------------------- Ajoute Pointage Dialog ----------------------->
+
+            <p-dialog header="Ajoute pointage" [modal]="true" [(visible)]="visible" 
+                [style]="{ width: '25rem' , height : 'fit-content' }"> <!--[(visible)]="visible": Two-way data binding on the visible property. The dialog will be displayed when visible is true (twali true ki tenzel 3al + button) and hidden when visible is false.-->
+                <!--Makes the dialog modal, meaning it will disable the background when open.-->
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="username" class="font-semibold w-6rem">Machine</label>
+                    <p-multiSelect [options]="machines" [(ngModel)]="selectedmachine" optionLabel="name"
+                        placeholder="Select etablissement" />
+                </div>
+                <div class="flex align-items-center gap-3 mb-5">
+                    <label for="email" class="font-semibold w-6rem">Time</label>
+                    <p-calendar [(ngModel)]="postdate" [iconDisplay]="'input'" [showIcon]="true" [timeOnly]="true"
+                        inputId="templatedisplay">
+                        <ng-template pTemplate="inputicon" let-clickCallBack="clickCallBack">
+                            <i class="pi pi-clock pointer-events-none" (click)="clickCallBack($event)"></i>
+                        </ng-template>
+                    </p-calendar>
+                </div>
+
+                <div class="flex justify-content-end gap-2">
+                    <p-button label="annuler" severity="secondary" (click)="visible = false" />
+                    <p-button label="Save" (click)="addPointage()" />
+                </div>
+            </p-dialog>
+
+            <!-------------------------- Delete Pointage Dialog ----------------------->
+
+            <p-dialog header="Supprimer pointage" [modal]="true" [(visible)]="confirmDeleteVisible"
+                [style]="{ width: '25rem' }">
+                <div class="text-center">
+                    <p>Êtes-vous sûr de vouloir supprimer ce pointage ?</p>
+                </div>
+                <div class="flex justify-content-around mt-4">
+                    <p-button severity="secondary" label="Annuler" icon="pi pi-times" class="p-button-secondary"
+                        (click)="confirmDeleteVisible = false"></p-button>
+                    <p-button label="Confirmer" icon="pi pi-check" (click)="deletePointage()"></p-button>
+                </div>
+            </p-dialog>
+        </div>
+
+
+    </div>
+</div>

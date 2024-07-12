@@ -1,0 +1,65 @@
+<p-dialog [(visible)]="categorietDialog" [style]="{ width: '450px' }" header="Ajouter Catégorie" [modal]="true" class="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <div class="formgrid grid">
+
+        <div class="field col">
+            <label for="name" class=" text-bluegray-700 font-medium" >Nom Catégorie<span class="text-red-500">*</span></label>
+            <input type="text" pInputText id="name"  [(ngModel)]="Newcategorie.nom" required [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !Newcategorie.nom) ||  (submitted && existNom)}" (input)="detectChange($event)"/>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.nom">Nom est obligatoire.</small>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && existNom ">Nom existe .</small>
+
+        </div>
+        <div class="field col">
+            <label for="name" class=" text-bluegray-700 font-medium">Désignation<span class="text-red-500">*</span></label>
+            <input type="text" pInputText id="name" [(ngModel)]="Newcategorie.designation" required  [ngClass]="{ 'ng-invalid ng-dirty': (submitted && !Newcategorie.designation) || (submitted && existDesignation)}" (input)="detectChange($event)"/>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.designation ">Designation est obligatoire.</small>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && existDesignation ">Designation existe .</small>
+
+        </div>
+        </div>
+
+        <div class="formgrid grid">
+
+        <div class="field col">
+            <label for="status" class=" text-bluegray-700 font-medium" >Niveau Catégorie<span class="text-red-500">*</span></label>
+            <p-dropdown   [(ngModel)]="Newcategorie.niveau"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Newcategorie.niveau}"  [appendTo]="'body'" [options]="niveauCategorie" optionLabel="niveau"  (onChange)="niveauCategChange($event)" placeholder="Select">
+            </p-dropdown>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.niveau">Niveau est obligatoire.</small>
+
+        </div>
+        <div class="field col">
+            <label for="status" class=" text-bluegray-700 font-medium">Niveau Parent</label>
+            <p-dropdown inputId="inventoryStatus"  [appendTo]="'body'" [(ngModel)]="Newcategorie.niveauParent" [options]="niveauParent" optionLabel="designation"  placeholder="Select">
+            </p-dropdown>
+            <!-- <p-dropdown inputId="inventoryStatus"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Newcategorie.niveauParent}"  [appendTo]="'body'" [(ngModel)]="Newcategorie.niveauParent" [options]="niveauParent" optionLabel="designation"  placeholder="Select">
+            </p-dropdown> -->
+            <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.niveauParent">Niveau Parent est obligatoire.</small> -->
+
+        </div>
+
+        </div>
+
+        <div class="formgrid grid">
+
+        <div class="field col">
+            <div class="flex align-items-center    flex-wrap" >
+        <p-inputSwitch class="mr-3" [(ngModel)]="Newcategorie.activer"></p-inputSwitch>  <label for="status" class=" text-bluegray-700 font-medium">Activer</label>
+            </div>
+
+        </div>
+        <div class="field col">
+            <div class="flex align-items-center    flex-wrap" >
+        <p-inputSwitch class="mr-3" [(ngModel)]="Newcategorie.activerMenu"></p-inputSwitch>  <label for="status" class=" text-bluegray-700 font-medium">Activer Menu</label>
+        </div>
+
+        </div>
+
+        </div>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text" [disabled]="disableSauvgarde" (click)="saveCategory()"></button>
+    </ng-template>
+</p-dialog>

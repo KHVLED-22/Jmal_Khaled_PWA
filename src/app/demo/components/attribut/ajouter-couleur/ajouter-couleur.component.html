@@ -1,0 +1,104 @@
+<p-dialog [(visible)]="CouleurDialog" [style]="{ width: '450px' }" header="Ajouter Couleur" [modal]="true" class="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <!-- <div class="field  grid">
+
+            <label for="name"class="col-fixed" style="width:100px">Nom <span class="text-red-500">*</span></label>
+            <div class="col">
+            <input type="text" pInputText id="name" required  />
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Marque.nom">Nom est obligatoire.</small> [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Marque.nom }"
+             </div>
+
+        </div> -->
+        <!-- <div class="grid p-fluid mt-3">
+
+        <div class="field col-12 md:col-6">
+            <span class="p-float-label">
+                <input
+                    type="text"
+                    id="inputtext"
+                    pInputText
+                />
+                <label for="inputtext">Valeur</label>
+            </span>
+        </div>
+        <div class="field col-12 md:col-6">
+            <span class="p-float-label">
+                <input
+                    type="text"
+                    id="inputtext"
+                    pInputText
+                />
+                <label for="inputtext">Designation</label>
+            </span>
+        </div>
+        <div class="field col-12 md:col-6">
+            <span class="p-float-label">
+                <input
+                    type="text"
+                    id="inputtext"
+                    pInputText
+                />
+                <label for="inputtext">Code Hexa</label>
+            </span>
+        </div>
+        <div class="field col-12 md:col-6 mt-2">
+                <p-colorPicker [appendTo]="'body'" ></p-colorPicker>
+
+        </div>
+    </div> -->
+    <div class="formgrid grid">
+
+        <div class="field col">
+            <label for="name" class=" text-bluegray-700 font-medium" >Valeur<span class="text-red-500">*</span></label>
+            <input type="text" pInputText id="name" [(ngModel)]="couleur.valeur" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !couleur.valeur}" (input)="changevalue('valeur',$event)" />
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !couleur.valeur" >Valeur est obligatoire.</small>
+        </div>
+        <div class="field col">
+            <label for="name" class=" text-bluegray-700 font-medium">Désignation<span class="text-red-500">*</span></label>
+            <input type="text" pInputText id="name"  [(ngModel)]="couleur.designation" required  [ngClass]="{ 'ng-invalid ng-dirty':submitted && !couleur.designation}" (input)="changevalue('designation',$event)"/>
+            <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.designation ">Designation est obligatoire.</small> -->
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !couleur.designation">Designation existe .</small>
+
+        </div>
+            </div>
+
+
+
+        <div class="formgrid grid">
+
+        <div class="field col">
+            <label for="name" class=" text-bluegray-700 font-medium" >Code Hexa<span class="text-red-500">*</span></label>
+            <input type="text" pInputText id="name" [(ngModel)]="couleur.code_hexa"  required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !couleur.code_hexa}"  (input)="changevalue('code_hexa',$event)"/>
+            <small class="ng-dirty ng-invalid text-red-500"*ngIf="submitted && !couleur.code_hexa" >Code Hexa est obligatoire.</small>
+        </div>
+        <div class="field col">
+            <div class="flex flex-column">
+                <div class="flex ">
+
+            <label for="name" class=" text-bluegray-700 font-medium ">Couleur<span class="text-red-500">*</span></label>
+
+            </div>
+            <div class="flex mt-3">
+
+            <p-colorPicker [appendTo]="'body'" [(ngModel)]="selectedCouleur" (onChange)="changeCouleur($event)"></p-colorPicker>
+
+        </div>
+
+            </div>
+
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted  && !selectedCouleur && !this.couleur.code_hexa">Choisir un couleur.</small>
+
+        </div>
+
+        </div>
+
+
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text" (click)="saveCouleur()"></button>
+    </ng-template>
+</p-dialog>

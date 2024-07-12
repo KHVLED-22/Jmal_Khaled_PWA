@@ -1,0 +1,102 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-3" >
+
+                <ng-template pTemplate="left">
+                    <!-- <h4>Liste des Marques</h4> -->
+                    <div class="my-2">
+                        <button pButton pRipple label="Ajouter" icon="pi pi-plus" class="p-button-success mr-2" (click)="showDialog()"> </button>
+                        <button pButton pRipple label="Supprimer" icon="pi pi-trash" class="p-button-danger" (click)="deleteSelectedAttribut()" [disabled]="!selectedAttribut|| !selectedAttribut.length"></button>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="right">
+                    <!-- <p-fileUpload mode="basic" accept="image/*" [maxFileSize]="1000000" label="Import" chooseLabel="Import" class="mr-2 inline-block"></p-fileUpload>
+                    <button pButton pRipple label="Export" icon="pi pi-upload" class="p-button-help" (click)="dt.exportCSV()"></button> -->
+                    <!-- <button pButton pRipple label="Ajouter Marques" icon="pi pi-plus" class="p-button-success mr-2" (click)="showDialog()"></button> -->
+                </ng-template>
+            </p-toolbar>
+            <!--
+            [lazy]="true"
+            (onLazyLoad)="loadCustomers($event)"
+            [loading]="loading" -->
+
+            <p-table
+                #dt
+                [value]="attributs"
+                responsiveLayout="scroll"
+                [globalFilterFields]="['name', 'country.name', 'representative.name', 'status']"
+                [rows]="pageSize"
+                [paginator]="true"
+                [totalRecords]="totalRecords"
+                [rowsPerPageOptions]="[5, 10, 25, 50]"
+                selectionMode="multiple"
+                [rowHover]="true"
+                dataKey="id"
+                [(selection)]="selectedAttribut"
+                responsiveLayout="stack" [breakpoint]="'960px'"
+                [lazy]="true"
+                (onLazyLoad)="loadCustomers($event)"
+                [loading]="loading"
+            >
+                <ng-template pTemplate="caption" >
+                    <div class="flex flex-column md:flex-row md:justify-content-between md:align-items-center ">
+
+                        <h5 class="m-0">Liste des Attributs</h5>
+
+                        <span class="block mt-1 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input pInputText type="text" class="input" placeholder="Rechercher..." class="w-full sm:w-auto" (input)="Rechercher($event)"  />
+                        </span>
+                    </div>
+                </ng-template>
+
+                <ng-template pTemplate="header">
+                    <tr >
+                        <th >
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="id">ID <p-sortIcon field="id"></p-sortIcon></th>
+                        <th pSortableColumn="nom">Nom <p-sortIcon field="nom"></p-sortIcon></th>
+                        <th >Activé </th>
+                        <th > Action</th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-attribut>
+                    <tr>
+                        <td style="width: 1%;">
+                            <p-tableCheckbox [value]="attribut"></p-tableCheckbox>
+                        </td>
+                        <td style="width: 14%; min-width: 10rem">
+                            {{attribut.id }}
+                        </td>
+                        <td style="width: 14%; min-width: 10rem">
+                            {{ attribut.nom }}
+                        </td>
+                        <td style="width: 14%; min-width: 10rem">
+                            <!-- {{ attribut.visible }} -->
+                            <p-inputSwitch class="mr-3" [(ngModel)]=" attribut.visible" (onChange)="switchOnChange(attribut)" ></p-inputSwitch>
+
+                        </td>
+
+                        <td style="width: 14%; min-width: 10rem">
+                            <div class="flex">
+                                <!-- <button pButton pRipple icon="pi pi-pencil" class="  p-button-text " ></button>
+                                <button pButton pRipple icon="pi pi-trash" class="  p-button-text " ></button> -->
+                                <a  ><i class="pi pi-pencil mr-2 text-blue-500"  (click)="updateAttribut(attribut)"></i></a>
+                                <a ><i class="pi pi-trash text-blue-500" (click)="showConfirmDialog(attribut)" ></i></a>
+
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        </div>
+    <app-ajouter-attribut  (dataEvent)="receiveDataFromChild($event)" [sendAttribut]="AttributToUpdate"></app-ajouter-attribut>
+    <app-confirm (responseConfirm)="receiveConfrimResponse($event)"></app-confirm>
+
+    </div>
+</div>

@@ -1,8 +1,60 @@
 <nav class="layout-breadcrumb">
     <ol>
         <ng-template ngFor let-item let-last="last" [ngForOf]="breadcrumbs$ | async">
-            <li>{{ item.label }}</li>
+            <li>
+                <div>{{ item.label }}</div>
+                    <div>
+                        <!-------------------------- Offline Custom popover ------------------------->
+                        <div class="Offline-Custom-popover">
+                            <!-- list-pointage.component.html -->
+                            <button id="offlinePopover" type="button" class="btn btn-secondary close-btn d-none"
+                            data-bs-custom-class="custom-popover"
+                            animation="true">
+                            Vous êtes hors ligne
+                            </button>
+                        </div>
+                    </div>
+            </li>
             <li *ngIf="!last" class="layout-breadcrumb-chevron">/</li>
+            
+            <!-------------------------- Offline PopUp ------------------------->
+                    
+            <div class="modal fade" id="offlineModal" tabindex="-1" aria-labelledby="offlineModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="offlineModalLabel">Vous êtes hors ligne</h5>
+                        </div>
+                        <div class="modal-body">
+                            Vous pouvez effectuer des modifications même si vous êtes hors ligne.
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary close-btn" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </ng-template>
     </ol>
 </nav>
+
+<style>
+    .modal-title {
+        color: red;
+    }
+    
+    .Offline-Custom-popover {
+        padding-left: 800px;
+        padding-top: -10px;
+    }
+
+    .modal-body {
+        color: black;
+    }
+    
+    .close-btn {
+        background-color: red;
+        color: white;
+        border-color: red;
+    }
+</style>

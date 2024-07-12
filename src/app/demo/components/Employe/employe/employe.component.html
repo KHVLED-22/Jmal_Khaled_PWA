@@ -1,0 +1,344 @@
+<div class="card">
+    <span class="text-900 text-xl font-bold mb-4 block">Create User</span>
+    <div class="grid">
+        <div class="col-12 lg:col-2">
+            <div class="text-900 font-medium text-xl mb-3">Profile</div>
+            <p class="m-0 p-0 text-600 line-height-3 mr-3">Odio euismod lacinia at quis risus sed vulputate odio.</p>
+        </div>
+        <div class="col-12 lg:col-10">
+            <div class="card">
+                <p-steps [model]="items" [readonly]="false" [(activeIndex)]="activeIndex"></p-steps>
+                <div *ngIf="activeIndex === 0">
+                    <!-- Personal Information -->
+                    <!-- <h3>Informations personnelles</h3> -->
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="nom" class="font-semibold w-6rem">Nom</label>
+                            <input id="nom" type="text" pInputText [(ngModel)]="employee.nom" placeholder="Nom" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="prenom" class="font-semibold w-6rem">Prénom</label>
+                            <input id="prenom" type="text" pInputText [(ngModel)]="employee.prenom" placeholder="Prénom" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="tel" class="font-semibold w-6rem">Téléphone</label>
+                            <input id="tel" type="text" pInputText [(ngModel)]="employee.tel" placeholder="Téléphone" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="date_embauche" class="font-semibold w-6rem">Date d'embauche</label>
+                            <p-calendar [(ngModel)]="employee.date_embauche" [showIcon]="true" inputId="date_embauche" placeholder="Date d'embauche"></p-calendar>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="sexe" class="font-semibold w-6rem">Sexe</label>
+                            <p-dropdown [options]="sexes" [(ngModel)]="employee.sexe" optionLabel="label" placeholder="Select sexe"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="etat_civil" class="font-semibold w-6rem">État civil</label>
+                            <p-dropdown [options]="etatCivils" [(ngModel)]="employee.etat_civil" optionLabel="label" placeholder="Select état civil"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nombre_enfant" class="font-semibold w-6rem">Nombre d'enfants</label>
+                            <input id="nombre_enfant" type="number" pInputText [(ngModel)]="employee.nombre_enfant" placeholder="Nombre d'enfants" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="matricule_cnss" class="font-semibold w-6rem">Matricule CNSS</label>
+                            <input id="matricule_cnss" type="text" pInputText [(ngModel)]="employee.matricule_cnss" placeholder="Matricule CNSS" />
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 1">
+                    <!-- Professional Information -->
+                    <!-- <h3>Informations professionnelles</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="poste" class="font-semibold w-6rem">Poste</label>
+                            <p-dropdown [options]="postes" [(ngModel)]="employee.poste" optionLabel="label" placeholder="Select poste"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="departement" class="font-semibold w-6rem">Département</label>
+                            <p-dropdown [options]="departements" [(ngModel)]="employee.departement" optionLabel="label" placeholder="Select département"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="societe" class="font-semibold w-6rem">Société</label>
+                            <p-dropdown [options]="societes" [(ngModel)]="employee.societe" optionLabel="label" placeholder="Select société"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="equipe" class="font-semibold w-6rem">Équipe</label>
+                            <p-dropdown [options]="equipes" [(ngModel)]="employee.equipe" optionLabel="label" placeholder="Select équipe"></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 2">
+                    <!-- HR Parameters -->
+                    <!-- <h3>Paramètre RH</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="regime_horaire" class="font-semibold w-6rem">Régime horaire</label>
+                            <p-dropdown [options]="regimeHoraires" [(ngModel)]="employee.regime_horaire" optionLabel="label" placeholder="Select régime horaire"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="type_contrat" class="font-semibold w-6rem">Type de contrat</label>
+                            <p-dropdown [options]="typesContrats" [(ngModel)]="employee.type_contrat" optionLabel="label" placeholder="Select type de contrat"></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 3">
+                    <!-- Documents -->
+                    <!-- <h3>Document</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="document" class="font-semibold w-6rem">Ajouter un document</label>
+                            <!-- <input id="document" type="file" (change)="onFileChange($event)" pInputText /> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <p-button label="Précédent" icon="pi pi-chevron-left" (click)="onPrevious()" [disabled]="activeIndex === 0"></p-button>
+                    <p-button label="Suivant" icon="pi pi-chevron-right" (click)="onNext()" [disabled]="activeIndex === items.length - 1"></p-button>
+                    <p-button label="Soumettre" icon="pi pi-check" (click)="onSubmit()" [disabled]="activeIndex !== items.length - 1"></p-button>
+                </div>
+            
+        </div>
+    </div>
+</div>
+
+
+<p-dialog header="Ajouter société" [modal]="true" [(visible)]="visible"
+[style]="{ minWidth: '40%', maxWidth: '90vw', width: 'auto', height: 'auto' }">
+<p-steps [model]="items" [readonly]="true" [(activeIndex)]="activeIndex" class="mb-4"></p-steps>
+                <div *ngIf="activeIndex === 0">
+                    <!-- Personal Information -->
+                    <!-- <h3>Informations personnelles</h3> -->
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nom" class="font-semibold w-6rem">Nom</label>
+                            <input id="nom" type="text" pInputText [(ngModel)]="employee.nom" placeholder="Nom" />
+                        </div>
+                        <div class="flex align-items-center gap-3 ml-6 mb-3">
+                            <label for="prenom" class="font-semibold w-6rem">Prénom</label>
+                            <input id="prenom" type="text" pInputText [(ngModel)]="employee.prenom" placeholder="Prénom" />
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="tel" class="font-semibold w-6rem">Téléphone</label>
+                            <input id="tel" type="text" pInputText [(ngModel)]="employee.tel" placeholder="Téléphone" />
+                        </div>
+                        <div class="flex align-items-center gap-3 ml-6 mb-3">
+                            <label for="date_embauche" class="font-semibold w-6rem">Date de naissance</label>
+                            <p-calendar [(ngModel)]="employee.date_embauche" [showIcon]="true" inputId="date_embauche" placeholder="Date d'embauche"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-8 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="sexe" class="font-semibold w-6rem">Sexe</label>
+                            <p-dropdown [options]="sexes" [(ngModel)]="employee.sexe" optionLabel="label" placeholder="Select sexe"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center ml-6 gap-3 mb-3">
+                            <label for="etat_civil" class="font-semibold w-6rem">État civil</label>
+                            <p-dropdown [options]="etatCivils" [(ngModel)]="employee.etat_civil" optionLabel="label" placeholder="Select état civil"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4 mb-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nombre_enfant" class="font-semibold w-6rem">Nombre d'enfants</label>
+                            <input id="nombre_enfant" type="number" pInputText [(ngModel)]="employee.nombre_enfant" placeholder="Nombre d'enfants" />
+                        </div>
+                        <div class="flex align-items-center gap-3 ml-6 mb-3">
+                            <label for="matricule_cnss" class="font-semibold w-6rem">Matricule CNSS</label>
+                            <input id="matricule_cnss" type="text" pInputText [(ngModel)]="employee.matricule_cnss" placeholder="Matricule CNSS" />
+                        </div>
+                    </div>
+                    </div>
+                <div *ngIf="activeIndex === 1">
+                    <!-- Professional Information -->
+                    <!-- <h3>Informations professionnelles</h3> -->
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nom" class="font-semibold w-6rem">societe</label>
+                            <input id="nom" type="text" pInputText [(ngModel)]="employee.nom" placeholder="Nom" />
+                        </div>
+                        <div class="flex align-items-center gap-3 ml-6 mb-3">
+                            <label for="prenom" class="font-semibold w-6rem">Département</label>
+                            <input id="prenom" type="text" pInputText [(ngModel)]="employee.prenom" placeholder="Prénom" />
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="tel" class="font-semibold w-6rem">Equipe</label>
+                            <input id="tel" type="text" pInputText [(ngModel)]="employee.tel" placeholder="Téléphone" />
+                        </div>
+                        <div class="flex align-items-center gap-3 ml-6 mb-3">
+                            <label for="date_embauche" class="font-semibold w-6rem">Etablissement</label>
+                            <p-calendar [(ngModel)]="employee.date_embauche" [showIcon]="true" inputId="date_embauche" placeholder="Date d'embauche"></p-calendar>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-8 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="sexe" class="font-semibold w-6rem">Poste</label>
+                            <p-dropdown [options]="sexes" [(ngModel)]="employee.sexe" optionLabel="label" placeholder="Select sexe"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center ml-6 gap-3 mb-3">
+                            <label for="etat_civil" class="font-semibold w-6rem">Supérieure hiérarchique</label>
+                            <p-dropdown [options]="etatCivils" [(ngModel)]="employee.etat_civil" optionLabel="label" placeholder="Select état civil"></p-dropdown>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4 mb-4">
+                       <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nombre_enfant" class="font-semibold w-6rem">Tel professionnel</label>
+                            <input id="nombre_enfant" type="number" pInputText [(ngModel)]="employee.nombre_enfant" placeholder="Nombre d'enfants"/>
+                            </div>
+                        <div class="flex align-items-center gap-3 ml-6 mb-3">
+                            <label for="matricule_cnss" class="font-semibold w-6rem">Email</label>
+                            <input id="matricule_cnss" type="text" pInputText [(ngModel)]="employee.matricule_cnss" placeholder="Matricule CNSS" />
+                        </div>
+                    </div>
+                    
+                    </div>
+                <div *ngIf="activeIndex === 2">
+                    <!-- HR Parameters -->
+                    <!-- <h3>Paramètre RH</h3> -->
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nom" class="font-semibold w-6rem">Type de contract</label>
+                            <input id="nom" type="text" pInputText [(ngModel)]="employee.nom" placeholder="Nom" />
+                        </div>
+                        
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="tel" class="font-semibold w-6rem">Date d'embauche</label>
+                            <input id="tel" type="text" pInputText [(ngModel)]="employee.tel" placeholder="Téléphone" />
+                        </div>
+                       
+                    </div>
+                    <div class="flex flex-wrap gap-8 mt-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="sexe" class="font-semibold w-6rem">Régime horaire</label>
+                            <p-dropdown [options]="sexes" [(ngModel)]="employee.sexe" optionLabel="label" placeholder="Select sexe"></p-dropdown>
+                        </div>
+                       
+                    </div>
+                    <div class="flex flex-wrap gap-3 mt-4 mb-4">
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nombre_enfant" class="font-semibold w-6rem">Régime conge</label>
+                            <input id="nombre_enfant" type="number" pInputText [(ngModel)]="employee.nombre_enfant" placeholder="Nombre d'enfants" />
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 3">
+                    <!-- Documents -->
+                    <!-- <h3>Document</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="document" class="font-semibold w-6rem">Ajouter un document</label>
+                            <!-- <input id="document" type="file" (change)="onFileChange($event)" pInputText /> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <p-button label="Précédent" icon="pi pi-chevron-left" (click)="onPrevious()" [disabled]="activeIndex === 0"></p-button>
+                    <p-button label="Suivant" icon="pi pi-chevron-right" (click)="onNext()" [disabled]="activeIndex === items.length - 1"></p-button>
+                    <p-button label="Soumettre" icon="pi pi-check" (click)="onSubmit()" [disabled]="activeIndex !== items.length - 1"></p-button>
+                </div>
+</p-dialog>
+
+
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <p-toast></p-toast>
+            <div class="card">
+                <p-steps [model]="items" [readonly]="false" [(activeIndex)]="activeIndex"></p-steps>
+                <div *ngIf="activeIndex === 0">
+                    <!-- Personal Information -->
+                    <!-- <h3>Informations personnelles</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="nom" class="font-semibold w-6rem">Nom</label>
+                            <input id="nom" type="text" pInputText [(ngModel)]="employee.nom" placeholder="Nom" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="prenom" class="font-semibold w-6rem">Prénom</label>
+                            <input id="prenom" type="text" pInputText [(ngModel)]="employee.prenom" placeholder="Prénom" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="tel" class="font-semibold w-6rem">Téléphone</label>
+                            <input id="tel" type="text" pInputText [(ngModel)]="employee.tel" placeholder="Téléphone" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="date_embauche" class="font-semibold w-6rem">Date d'embauche</label>
+                            <p-calendar [(ngModel)]="employee.date_embauche" [showIcon]="true" inputId="date_embauche" placeholder="Date d'embauche"></p-calendar>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="sexe" class="font-semibold w-6rem">Sexe</label>
+                            <p-dropdown [options]="sexes" [(ngModel)]="employee.sexe" optionLabel="label" placeholder="Select sexe"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="etat_civil" class="font-semibold w-6rem">État civil</label>
+                            <p-dropdown [options]="etatCivils" [(ngModel)]="employee.etat_civil" optionLabel="label" placeholder="Select état civil"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="nombre_enfant" class="font-semibold w-6rem">Nombre d'enfants</label>
+                            <input id="nombre_enfant" type="number" pInputText [(ngModel)]="employee.nombre_enfant" placeholder="Nombre d'enfants" />
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="matricule_cnss" class="font-semibold w-6rem">Matricule CNSS</label>
+                            <input id="matricule_cnss" type="text" pInputText [(ngModel)]="employee.matricule_cnss" placeholder="Matricule CNSS" />
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 1">
+                    <!-- Professional Information -->
+                    <!-- <h3>Informations professionnelles</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="poste" class="font-semibold w-6rem">Poste</label>
+                            <p-dropdown [options]="postes" [(ngModel)]="employee.poste" optionLabel="label" placeholder="Select poste"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="departement" class="font-semibold w-6rem">Département</label>
+                            <p-dropdown [options]="departements" [(ngModel)]="employee.departement" optionLabel="label" placeholder="Select département"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="societe" class="font-semibold w-6rem">Société</label>
+                            <p-dropdown [options]="societes" [(ngModel)]="employee.societe" optionLabel="label" placeholder="Select société"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="equipe" class="font-semibold w-6rem">Équipe</label>
+                            <p-dropdown [options]="equipes" [(ngModel)]="employee.equipe" optionLabel="label" placeholder="Select équipe"></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 2">
+                    <!-- HR Parameters -->
+                    <!-- <h3>Paramètre RH</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="regime_horaire" class="font-semibold w-6rem">Régime horaire</label>
+                            <p-dropdown [options]="regimeHoraires" [(ngModel)]="employee.regime_horaire" optionLabel="label" placeholder="Select régime horaire"></p-dropdown>
+                        </div>
+                        <div class="flex align-items-center gap-3 mb-3">
+                            <label for="type_contrat" class="font-semibold w-6rem">Type de contrat</label>
+                            <p-dropdown [options]="typesContrats" [(ngModel)]="employee.type_contrat" optionLabel="label" placeholder="Select type de contrat"></p-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="activeIndex === 3">
+                    <!-- Documents -->
+                    <!-- <h3>Document</h3> -->
+                    <div class="p-fluid">
+                        <div class="flex align-items-center gap-3 mb-3 mt-3">
+                            <label for="document" class="font-semibold w-6rem">Ajouter un document</label>
+                            <!-- <input id="document" type="file" (change)="onFileChange($event)" pInputText /> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <p-button label="Précédent" icon="pi pi-chevron-left" (click)="onPrevious()" [disabled]="activeIndex === 0"></p-button>
+                    <p-button label="Suivant" icon="pi pi-chevron-right" (click)="onNext()" [disabled]="activeIndex === items.length - 1"></p-button>
+                    <p-button label="Soumettre" icon="pi pi-check" (click)="onSubmit()" [disabled]="activeIndex !== items.length - 1"></p-button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

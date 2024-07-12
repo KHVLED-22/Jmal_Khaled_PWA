@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="formValue.taskList.tasks.length || showTaskContainer" class="col-12 flex flex-column px-5">
+                <div *ngIf="formValue.taskList?.tasks?.length || showTaskContainer" class="col-12 flex flex-column px-5">
                     <div class="flex justify-content-between mb-3">
                         <span class="text-900 font-semibold">Progress</span>
                         <span class="text-900 font-semibold">{{ formValue.progress }}%</span>
@@ -81,14 +81,14 @@
                     <p-progressBar name="progress" [value]="formValue.progress" [showValue]="false"></p-progressBar>
                 </div>
 
-                <div *ngIf="formValue.taskList.tasks.length || showTaskContainer" class="col-12 flex flex-column px-5">
+                <div *ngIf="formValue.taskList?.tasks?.length || showTaskContainer" class="col-12 flex flex-column px-5">
                     <div class="h-4rem -mb-4">
                         <p-inplace #inplace2 [closable]="true" closeIcon="pi pi-check" styleClass="h-4rem" (onActivate)="focus(2)">
                             <ng-template pTemplate="display">
-                                <span class="block text-900 font-semibold text-lg mt-3" pTooltip="Click to edit" tooltipPosition="left">{{ formValue.taskList.title }}</span>
+                                <span class="block text-900 font-semibold text-lg mt-3" pTooltip="Click to edit" tooltipPosition="left">{{ formValue.taskList?.title }}</span>
                             </ng-template>
                             <ng-template pTemplate="content">
-                                <input #inputTaskListTitle type="text" name="title" [(ngModel)]="formValue.taskList.title" pInputText class="w-20rem h-3rem text-900 mt-2 text-lg" (keydown.enter)="inplace2.deactivate()" />
+                                <!-- <input #inputTaskListTitle type="text" name="title" [(ngModel)]="formValue?.taskList?.title" pInputText class="w-20rem h-3rem text-900 mt-2 text-lg" (keydown.enter)="inplace2.deactivate()" /> -->
                             </ng-template>
                         </p-inplace>
                     </div>

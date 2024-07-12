@@ -1,0 +1,220 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card ">
+            <p-toast></p-toast>
+            <div class="card border-1 surface-border ">
+                <div class="flex-column">
+
+                    <!-------------------------- buttons ------------------------->
+
+
+
+
+                    <div class=" grid   mt-0">
+                        <div class="px-0 py-0 col">
+                            <div class="row">
+                                <h5 *ngIf="!modif" class="ml-3 mt-3">Aujourd'hui : {{ formatDate(date, 'date') }}
+                                </h5>
+                                <h5 *ngIf="modif" class="ml-3 mt-3">Planing : {{ planing.nom }}
+                                </h5>
+                            </div>
+                        </div>
+
+                        <div class="px-0 py-0 col flex justify-content-end flex-wrap">
+                        <button *ngIf="modif" pButton pRipple label="Retourner" icon="pi pi-check" (click)="modif = !modif" class="p-button-success fixed-height mr-2 mb-2"  ></button>
+
+                        <button *ngIf="!modif" pButton pRipple label="Ajouter" (click)="visible = true ;  planing = {}"  icon="pi pi-plus" class="p-button-success fixed-height mr-2 mb-2" ></button>
+                        <button *ngIf="modif" pButton pRipple label="Sauvegarder" (click)="sendplaning()" icon="pi pi-check" class="p-button-success fixed-height mr-2 mb-2" ></button>
+
+                        </div>
+                    </div>
+
+                    <!-------------------------- buttons ------------------------->
+                </div>
+            </div>
+
+            <!-------------------------- table 1  ------------------------->
+
+            <p-table *ngIf="!modif" #dataTable [paginator]="true" [value]="planings" [columns]="SelectedCols"
+                [tableStyle]="{'min-width': '60rem'}" [rows]="10" sortMode="single" responsiveLayout="stack"
+                [loading]="loading" scrollHeight="flex" dataKey="id" [lazy]="true" [totalRecords]="totalRecords"
+                (onLazyLoad)="onLazyLoad($event)" [rowsPerPageOptions]="[10 , 20 , 50]">
+
+                <ng-template pTemplate="header" let-columns>
+                    <tr>
+                        
+                        <th *ngFor="let col of columns" [style.width.%]="col.width"
+                            [pSortableColumn]="col.sortable ? col.field : null">
+                            <div class="header-text">
+                                {{ col.header }}
+                                <p-sortIcon *ngIf="col.sortable" field="{{ col.field }}"></p-sortIcon>
+                            </div>
+                        </th>
+                        <th></th><th></th><th></th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-plan let-rowIndex="rowIndex">
+                    <tr>
+                        <td *ngFor="let col of SelectedCols">
+                            <ng-container *ngIf="col.field !== 'groupe_regime_horaire' && col.field !== 'debut_validite' && col.field !== 'fin_validite'">
+                              {{ plan[col.field] }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'groupe_regime_horaire' && plan?.groupe_regime_horaire?.nom">
+                              {{ plan.groupe_regime_horaire.nom }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'debut_validite'">
+                              {{ datePipe.transform(plan.debut_validite, 'dd MMMM') }}
+                            </ng-container>
+                            <ng-container *ngIf="col.field === 'fin_validite'">
+                              {{ datePipe.transform(plan.fin_validite, 'dd MMMM') }}
+                            </ng-container>
+                          </td>
+                <td><p-button icon="pi pi-clock" [rounded]="true" severity="warning" [outlined]="true"
+                    (onClick)="modif = true ; planing = plan ; JourHoraire = plan.jour_regime_horaires ; oldHoraire = plan.jour_regime_horaires " /></td>
+                <td><p-button icon="pi pi-pencil" [rounded]="true" severity="success" [outlined]="true"
+                    (onClick)="visible = true ; planing = plan " /></td>
+                    <td><p-button icon="pi pi-trash" [rounded]="true" severity="danger" [outlined]="true"
+                        (onClick)="confirmDeleteVisible = true ; planing = plan " /></td>
+                </tr>
+                </ng-template>
+            </p-table>
+
+            <!---------------------------------- table 2  ------------------------------->
+
+
+            <p-table *ngIf="modif" #dataTable [value]="JourHoraire" [columns]="ColsJ" 
+            [tableStyle]="{'min-width': '60rem'}" [rows]="10" sortMode="single" responsiveLayout="stack"
+            [loading]="loading" scrollHeight="flex" dataKey="id">
+       <ng-template pTemplate="header" let-columns>
+           <tr>
+               <th *ngFor="let col of columns" [style.width.%]="col.width" [pSortableColumn]="col.sortable ? col.field : null">
+                   <div class="header-text">
+                       {{ col.header }}
+                       <p-sortIcon *ngIf="col.sortable" field="{{ col.field }}"></p-sortIcon>
+                   </div>
+               </th>
+           </tr>
+       </ng-template>
+       <ng-template pTemplate="body" let-plan let-rowIndex="rowIndex">
+        <tr>
+            <td *ngFor="let col of ColsJ">
+                <ng-container [ngSwitch]="col.field">
+                    <ng-container *ngSwitchCase="'nom'">
+                        {{ plan[col.field] }}
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'travail'">
+                        <p-checkbox [(ngModel)]="plan[col.field]" [binary]="true"></p-checkbox>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'nbrePointages'">
+                        <p-dropdown [disabled]="!plan.travail" [(ngModel)]="plan[col.field]" [options]="pointageOptions" optionLabel="label" optionValue="value"></p-dropdown>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'duree_pause'">
+                        <div *ngIf="plan.nbrePointages === 4">{{CalculdiffInMinutes(plan.heureSortie1, plan.heureEntree2)}}</div>
+                        <div *ngIf="plan.nbrePointages === 2">{{CalculdiffInMinutes(plan.heureDepartPause, plan.heureFinPause)}}</div>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'nbre_heures_prevues'">
+                        {{ plan[col.field] | number:'1.2-2' }} 
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'heureEntree1'">
+                        <p-calendar *ngIf="plan.travail" [(ngModel)]="plan[col.field]" [timeOnly]="true" dateFormat="HH:mm:ss" (ngModelChange)="onTimeChange(plan, 'heureEntree1')"></p-calendar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'heureSortie1'">
+                        <p-calendar *ngIf="plan.travail" [(ngModel)]="plan[col.field]" [timeOnly]="true" dateFormat="HH:mm:ss" (ngModelChange)="onTimeChange(plan, 'heureSortie1')"></p-calendar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'heureEntree2'">
+                        <p-calendar *ngIf="plan.travail && plan.nbrePointages !== 2" [(ngModel)]="plan[col.field]" [timeOnly]="true" dateFormat="HH:mm:ss" (ngModelChange)="onTimeChange(plan, 'heureEntree2')" [minDate]="plan.heureSortie1"></p-calendar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'heureSortie2'">
+                        <p-calendar *ngIf="plan.travail && plan.nbrePointages !== 2" [(ngModel)]="plan[col.field]" [timeOnly]="true" dateFormat="HH:mm:ss" (ngModelChange)="onTimeChange(plan, 'heureSortie2')" [minDate]="plan.heureEntree2"></p-calendar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'heureDepartPause'">
+                        <p-calendar *ngIf="plan.travail && plan.nbrePointages === 4" [(ngModel)]="plan.heureSortie1" [timeOnly]="true" dateFormat="HH:mm:ss" [readonlyInput]="true"></p-calendar>
+                        <p-calendar *ngIf="plan.travail && plan.nbrePointages !== 4" (ngModelChange)="onTimeChange(plan, 'heureDepartPause')" [(ngModel)]="plan[col.field]" [timeOnly]="true" dateFormat="HH:mm:ss"></p-calendar>
+                    </ng-container>
+                    <ng-container *ngSwitchCase="'heureFinPause'">
+                        <p-calendar *ngIf="plan.travail && plan.nbrePointages === 4" [(ngModel)]="plan.heureEntree2" [timeOnly]="true" dateFormat="HH:mm:ss" [readonlyInput]="true"></p-calendar>
+                        <p-calendar *ngIf="plan.travail && plan.nbrePointages !== 4" (ngModelChange)="onTimeChange(plan, 'heureFinPause')" [(ngModel)]="plan[col.field]" [timeOnly]="true" dateFormat="HH:mm:ss"></p-calendar>
+                    </ng-container>
+                </ng-container>
+            </td>
+        </tr>
+    </ng-template>
+       <ng-template pTemplate="footer">
+        <tr>
+          <td colspan="3" style="text-align: end;">
+            <strong [ngClass]="{ 'text-danger': getTotalNbreHeuresPrevues().exceeded }">
+              Total heures prévues: {{ getTotalNbreHeuresPrevues().total | number }}
+            </strong>
+            <span *ngIf="getTotalNbreHeuresPrevues().exceeded" class="text-danger">
+              (Nombre d'heures dépassé)
+            </span>
+          </td>
+        </tr>
+      </ng-template>
+            </p-table>
+            <!-------------------------- Ajoute Pointage Dialog ----------------------->
+
+            <p-dialog header="Ajouter planification" [modal]="true" [(visible)]="visible" [style]="{ width: '30rem', height: 'fit-content' }">
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="nom" class="font-semibold w-6rem">Nom</label>
+                    <input id="nom" type="text" pInputText [(ngModel)]="planing.nom" placeholder="Nom de la planification" />
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="nom" class="font-semibold w-6rem">Description</label>
+                    <input id="nom" type="text" pInputText [(ngModel)]="planing.description" placeholder="Nom de la planification" />
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="nom" class="font-semibold w-6rem">Planning horaire</label>
+                    <input id="nom" type="text" pInputText [(ngModel)]="planing.planning_horaire" placeholder="Planning horaire" />
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="tel" class="font-semibold w-6rem">groupe regime horaire</label>
+                    <p-multiSelect [options]="Groupes" [(ngModel)]="planing.groupe_regime_horaire" optionLabel="nom"
+                      placeholder="Selectionner Groupes"  [appendTo]="'body'"></p-multiSelect>
+                </div>
+
+                <!-- <div class="flex align-items-center gap-3 mb-3">
+                    <label for="adresse" class="font-semibold w-6rem">Filtrer par equipes</label>
+                    <p-multiSelect [options]="equipes" [(ngModel)]="Selequipes" optionLabel="nom"
+                    (onChange)="filterUsers($event)" placeholder="Select Equipes" [appendTo]="'body'"></p-multiSelect>
+                </div> -->
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="adresse" class="font-semibold w-6rem">Employees</label>
+                    <p-multiSelect [options]="filtredUsers" [(ngModel)]="planing.users" optionLabel="username"
+                        placeholder="Select name" [appendTo]="'body'"></p-multiSelect>
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="nombre_heures" class="font-semibold w-6rem">Nombre d'heures</label>
+                    <input id="nombre_heures" type="number" pInputText [(ngModel)]="planing.nombre_heures" placeholder="Nombre d'heures" />
+                </div>
+                <div class="flex align-items-center gap-3 mb-3">
+                    <label for="debut_validite" class="font-semibold w-6rem">Début validité</label>
+                    <p-calendar id="debut_validite" [(ngModel)]="planing.debut_validite" dateFormat="dd/mm"  view="date" [monthNavigator]="true" [yearNavigator]="false" placeholder="Début validité" [appendTo]="'body'"></p-calendar>
+                </div>
+                <div class="flex align-items-center gap-3 mb-5">
+                    <label for="fin_validite" class="font-semibold w-6rem">Fin validité</label>
+                    <p-calendar id="fin_validite" [(ngModel)]="planing.fin_validite" dateFormat="dd/mm" [monthNavigator]="true" [yearNavigator]="false" placeholder="Fin validité" [appendTo]="'body'"></p-calendar>
+                </div>
+                <div class="flex justify-content-end gap-2">
+                    <p-button label="Annuler" severity="secondary" (click)="visible = false" />
+                    <p-button label="Sauvegarder" (click)="savePlaning()" />
+                </div>
+            </p-dialog>
+        
+            <!-------------------------- Delete Pointage Dialog ----------------------->
+
+            <p-dialog header="Supprimer pointage" [modal]="true" [(visible)]="confirmDeleteVisible"
+                [style]="{ width: '25rem' }">
+                <div class="text-center">
+                    <p>Êtes-vous sûr de vouloir supprimer ce pointage ?</p>
+                </div>
+                <div class="flex justify-content-around mt-4">
+                    <p-button severity="secondary" label="Annuler" icon="pi pi-times" class="p-button-secondary"
+                        (click)="confirmDeleteVisible = false"></p-button>
+                    <p-button label="Confirmer" icon="pi pi-check" (click)="deletePlaning()"  ></p-button>
+                </div>
+            </p-dialog>
+        </div>
+    </div>
+</div>

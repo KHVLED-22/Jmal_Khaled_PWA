@@ -1,0 +1,164 @@
+
+   <div class="grid">
+        <div class="col-12">
+            <div class="card px-6 py-6">
+                <div class="under-card px-6 py-6 ">
+                    <h4>Fiche Catégorie</h4>
+                    <p-toast></p-toast>
+
+                    <br>
+
+
+                    <div class="field grid">
+
+                            <label for="name" class=" text-bluegray-700 font-semibold font-semibold"  [style]="{ width: '120px' }">Nom Catégorie<span class="text-red-500">*</span></label>
+                            <div class="col">
+
+                            <input type="text" pInputText   required [style]="{ width: '450px' }" disabled="true" [(ngModel)]="categorie.nom" (input)="detectChangesInput('nom',$event)"/>
+                        </div>
+
+                            <label for="name" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Désignation<span class="text-red-500">*</span></label>
+                            <div class="col">
+
+                            <input type="text" pInputText   required [style]="{ width: '450px' }" disabled="true" [(ngModel)]="categorie.designation" (input)="detectChangesInput('designation',$event)"/>
+                        </div>
+                        </div>
+
+                        <div class="field grid">
+
+                            <label for="status" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Niveau Catégorie</label>
+                            <div class="col">
+
+                            <p-dropdown [(ngModel)]="categorie.niveau"  optionLabel="niveau" [options]="niveauCategorie" placeholder="Select" [style]="{ width: '450px' }"  (onChange)="niveauCategChange('niveau',$event)">
+                            </p-dropdown>
+
+                        </div>
+
+
+                            <label for="status" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Niveau Parent</label>
+                            <div class="col">
+
+                            <p-dropdown [(ngModel)]="categorie.niveauParent"  optionLabel="nom" [options]="niveauParent" placeholder="Select" [style]="{ width: '450px' }"   (onChange)="niveauCategParChange('niveauParent',$event)">
+                            </p-dropdown>
+                        </div>
+
+
+                        </div>
+
+
+                            <div class="field grid">
+
+                            <label for="status" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }" >Description</label>
+                            <div class="col">
+
+                            <p-editor  [style]="{ height: '70px' }" [(ngModel)]="categorie.description" (onTextChange)="detectChangesEditor($event)"></p-editor>
+                        </div>
+
+
+                            </div>
+
+                            <div class="field grid">
+
+                                    <div class="flex align-items-center    flex-wrap" >
+                                        <label for="status" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Activer</label>
+                                        <div class="col">
+                                        <p-inputSwitch class="mr-3" [(ngModel)]="categorie.activer" (onChange)="handleChange('activer',$event)"></p-inputSwitch>
+                                    </div>
+
+                                    </div>
+
+
+                                    <div class="flex align-items-center    flex-wrap" >
+                                    <label for="status" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Activer Menu</label>
+                                    <div class="col">
+                                    <p-inputSwitch class="mr-3" [(ngModel)]="categorie.activerMenu" (onChange)="handleChange('activerMenu',$event)"></p-inputSwitch>
+                                </div>
+
+                                </div>
+
+
+                                </div>
+
+
+                                <div class="field grid">
+
+                                        <div class="flex align-items-center    flex-wrap" >
+                                            <label for="status" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Image</label>
+                                            <div class="col">
+
+                                            <p-fileUpload name="files" url="http://192.168.0.245/api/upload" (onUpload)="onUpload($event)" (onSelect)="changeImage()"  [multiple]="false" accept="image/*" [maxFileSize]="1000000" [style]="{ width: '1053px' }">
+
+                                                <ng-template pTemplate="content">
+                                                    <ul *ngIf="uploadedFiles.length">
+                                                        <li *ngFor="let file of uploadedFiles">{{ file.name }} </li>
+                                                    </ul>
+                                                    <ul *ngIf="getFiles && categorie.image?.name">
+                                                        <img [src]="categorie.image?.name" width="80" height="80" alt="Image">
+                                                    </ul>
+                                                </ng-template>
+                                            </p-fileUpload>
+                                        </div>
+
+                                          </div>
+
+
+                                    </div>
+
+                                    <div class="field grid">
+
+                                            <label for="name" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Balise de titre</label>
+                                            <div class="col">
+
+                                            <input type="text" pInputText id="name"  required [style]="{ width: '450px' }" [(ngModel)]="categorie.baliseTitre" (input)="detectChangesInput('baliseTitre',$event)"/>
+                                        </div>
+
+                                </div>
+
+                                <div class="field grid">
+
+                                        <label for="name" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }" >Meta description</label>
+                                        <div class="col">
+
+                                        <textarea
+                                        rows="5"
+                                        cols="30"
+                                        pInputTextarea
+                                        [style]="{ width: '1053px' }"
+                                        [(ngModel)]="categorie.metaDescription"
+                                        (input)="detectChangesInput('metaDescription',$event)"
+                                    ></textarea>
+                                </div>
+                            </div>
+
+                            <div class="field grid">
+
+                                    <label for="name" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">Meta mots clés</label>
+                                    <div class="col">
+                                    <input type="text" pInputText id="name"  required [style]="{ width: '450px' }" [(ngModel)]="categorie.metaMotsCles" (input)="detectChangesInput('metaMotsCles',$event)" />
+                                </div>
+
+                        </div>
+
+                        <div class="field grid">
+
+                                <label for="name" class=" text-bluegray-700 font-semibold" [style]="{ width: '120px' }">URL simplifiée</label>
+                                <div class="col">
+
+                                <input type="text" pInputText id="name"  required [style]="{ width: '450px' }" [(ngModel)]="categorie.urlSimplifiee" (input)="detectChangesInput('urlSimplifiee',$event)" />
+                            </div>
+
+                    </div>
+                    <div class="flex justify-content-end flex-wrap">
+                        <button pButton pRipple label="Fermer" class="p-button-success mr-2" routerLink="/categories/liste-categorie"></button>
+                        <button pButton pRipple label="Sauvegarder"  class="p-button-primary"  (click)="updateCategorie()"></button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- <div *ngIf="spinnerShow" class="layout-preloader-container">
+        <div class="layout-preloader">
+            <span></span>
+        </div>
+    </div> -->

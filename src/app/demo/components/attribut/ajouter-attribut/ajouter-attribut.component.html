@@ -1,0 +1,112 @@
+<p-dialog [(visible)]="AtttributDialog" [style]="{ width: '550px' }" header="Ajouter Attribut" [modal]="true" class="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+        <div class="field  grid">
+
+            <label for="name"class="col-fixed" style="width:100px">Nom <span class="text-red-500">*</span></label>
+            <div class="col">
+                <input type="text" pInputText id="name" [(ngModel)]="Attribut.nom" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Attribut.nom }" (input)="changeInput($event)" />
+            <!-- <input type="text" pInputText id="name" [disabled]="disableNom"  [(ngModel)]="Attribut.nom" required [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Attribut.nom }" /> -->
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Attribut.nom">Nom est obligatoire.</small>
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="exist && Attribut.nom">Nom doit etre unique.</small>
+
+             </div>
+
+        </div>
+        <!-- <div class="field  grid">
+
+            <label for="name"class="col-fixed" style="width:100px">Designation <span class="text-red-500">*</span></label>
+            <div class="col">
+            <input type="text" pInputText id="name"  required />
+            <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Marque.designation">Designation est obligatoire.</small>
+             </div>
+
+        </div> -->
+
+        <div class="field  grid">
+
+            <label for="name" class="col-fixed" style="width:100px" >Activé</label>
+            <div class="col">
+                <p-inputSwitch class="mr-3"  [(ngModel)]="Attribut.visible"     (onChange)="detectSwitchChange($event)"
+                ></p-inputSwitch>
+             </div>
+
+        </div>
+
+        <button pButton pRipple type="button" label="Ajouter Valeur" class="p-button-raised p-button-info mb-3" (click)="AddAttributValues()"></button>
+
+
+<p-table  dataKey="id" editMode="row" [tableStyle]="{'min-width': '30rem'}"  [value]="Attribut.attribut_values">
+    <ng-template pTemplate="header">
+        <tr>
+            <th style="width:3%">Valeur</th>
+            <th style="width:3%">designation</th>
+            <th style="width:3%">Action</th>
+        </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-value let-editing="editing" let-ri="rowIndex">
+
+            <ng-container *ngIf="ri === 0 && AddValue">
+                <tr>
+
+                    <td>
+                     <input type="text" pInputText  [(ngModel)]="NewValeurAttribut.valeur" required [ngClass]="{ 'ng-invalid ng-dirty': save && !NewValeurAttribut.valeur }" />
+                     <small class="ng-dirty ng-invalid text-red-500" *ngIf="save && !NewValeurAttribut.valeur">Nom est obligatoire.</small>
+
+                    </td>
+                    <td>
+                     <input type="text" pInputText  [(ngModel)]="NewValeurAttribut.designation" required [ngClass]="{ 'ng-invalid ng-dirty': save && !NewValeurAttribut.designation }" />
+                     <small class="ng-dirty ng-invalid text-red-500" *ngIf="save && !NewValeurAttribut.designation">Designation est obligatoire.</small>
+
+                    </td>
+                    <td>
+                        <!-- <button  pButton pRipple type="button"  icon="pi pi-check"  class="p-button-rounded p-button-text p-button-success ml-8"></button> -->
+                        <button  pButton pRipple type="button"  icon="pi pi-check"  class="p-button-rounded p-button-text p-button-success ml-5 mr-2" (click)="saveValeurAttribut()"></button>
+                        <button pButton pRipple type="button"  icon="pi pi-times"  class="p-button-rounded p-button-text p-button-danger" (click)="CancelAddValue()"></button>
+                    </td>
+
+                 </tr>
+            </ng-container>
+
+
+            <tr [pEditableRow]="value" *ngIf="value.valeur || value.designation || value.valeur != '' || value.designation != ''">
+
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="value.valeur">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{value.valeur}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+            <td>
+                <p-cellEditor>
+                    <ng-template pTemplate="input">
+                        <input pInputText type="text" [(ngModel)]="value.designation" required>
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                        {{value.designation}}
+                    </ng-template>
+                </p-cellEditor>
+            </td>
+
+
+            <td>
+                <div class="flex align-items-center justify-content-center gap-2">
+                    <button *ngIf="!editing" pButton pRipple type="button" pInitEditableRow icon="pi pi-pencil" (click)="onRowEditInit(value)" class="p-button-rounded p-button-text"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pSaveEditableRow icon="pi pi-check" (click)="onRowEditSave(value)" class="p-button-rounded p-button-text p-button-success mr-1"></button>
+                    <button *ngIf="editing" pButton pRipple type="button" pCancelEditableRow icon="pi pi-times" (click)="onRowEditCancel(value, ri)" class="p-button-rounded p-button-text p-button-danger"></button>
+                </div>
+            </td>
+        </tr>
+    </ng-template>
+</p-table>
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text"  [disabled]="disableSauvgarde" (click)="saveAttribut()"></button>
+    </ng-template>
+</p-dialog>

@@ -1,0 +1,66 @@
+<p-toast></p-toast>
+<p-dialog [(visible)]="VariationDialog" [style]="{ width: '450px' }" header="Modifier Variation" [modal]="true" class="p-fluid" (onHide)="hideDialog()">
+    <ng-template pTemplate="content">
+
+
+        <div class="formgrid grid">
+
+            <div class="field col">
+                <label for="name" class=" text-bluegray-700 font-medium" >Quantité<span class="text-red-500">*</span></label>
+                <p-inputNumber [(ngModel)]="variation.stock" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100" (onInput)="changeInputValue('stock',$event)"> </p-inputNumber> 
+                              <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.nom">Nom est obligatoire.</small> -->
+                <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && existNom ">Nom existe .</small> -->
+
+            </div>
+            <div class="field col">
+                <label for="name" class=" text-bluegray-700 font-medium">Prix Initiale<span class="text-red-500">*</span></label>
+                <p-inputNumber [(ngModel)]="variation.prix_achat" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  (onInput)="changeInputValue('prix_achat',$event)" [disabled]="true"> </p-inputNumber>
+                <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.designation ">Designation est obligatoire.</small> -->
+                <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && existDesignation ">Designation existe .</small> -->
+
+            </div>
+            </div>
+
+            <div class="formgrid grid">
+
+            <div class="field col">
+                <label for="status" class=" text-bluegray-700 font-medium" >Remise<span class="text-red-500">*</span></label>
+                <p-inputNumber [(ngModel)]="variation.remise" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  (onInput)="changeInputValue('remise',$event)"> </p-inputNumber>
+
+                <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.niveau">Niveau est obligatoire.</small> -->
+
+            </div>
+            <div class="field col">
+                <label for="status" class=" text-bluegray-700 font-medium">Prix de Vente</label>
+                <p-inputNumber [(ngModel)]="variation.prix_vente" mode="decimal" [showButtons]="true" inputId="minmax-buttons" [min]="0" [max]="100"  (onInput)="changeInputValue('prix_vente',$event)"> </p-inputNumber>
+
+                <!-- <p-dropdown inputId="inventoryStatus"  [ngClass]="{ 'ng-invalid ng-dirty': submitted && !Newcategorie.niveauParent}"  [appendTo]="'body'" [(ngModel)]="Newcategorie.niveauParent" [options]="niveauParent" optionLabel="designation"  placeholder="Select">
+                </p-dropdown> -->
+                <!-- <small class="ng-dirty ng-invalid text-red-500" *ngIf="submitted && !Newcategorie.niveauParent">Niveau Parent est obligatoire.</small> -->
+
+            </div>
+
+            </div>
+
+
+
+            <div class="formgrid grid">
+
+                <div class="field col">
+                    <label for="status" class=" text-bluegray-700 font-medium" >Activer<span class="text-red-500">*</span></label>
+                    <p-inputSwitch [(ngModel)]="variation.activer"></p-inputSwitch>
+                </div>
+
+
+                </div>
+
+
+
+
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <button pButton pRipple label="Fermer" icon="pi pi-times" class="p-button-text" (click)="hideDialog()"></button>
+        <button pButton pRipple label="Sauvegarder" icon="pi pi-check" class="p-button-text" (click)="saveVariation()"></button>
+    </ng-template>
+</p-dialog>

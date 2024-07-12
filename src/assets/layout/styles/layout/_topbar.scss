@@ -2,7 +2,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--topbar-bg-color);
+    // nouveau code
+    background-color: white;
     box-shadow: var(--topbar-box-shadow);
     min-height: 4.4rem;
     padding: 1rem 0;
@@ -101,7 +102,7 @@
                                 color: var( --topbar-item-text-color-secondary);
                             }
                         }
-                        
+
                     }
 
                     .p-inputtext {
@@ -120,8 +121,8 @@
                     color: var(--topbar-item-text-color);
                 }
             }
-              
-            
+
+
             &.topbar-search {
                 .p-input-icon-left{
                     i {
@@ -132,7 +133,7 @@
                             color: var( --topbar-item-text-color-secondary);
                         }
                     }
-                    
+
                 }
                 .p-inputtext {
                     padding-top: 0.5rem;
@@ -141,7 +142,7 @@
                     color: var(--topbar-item-text-color);
                     border-color: var(--topbar-border-color);
                     background-color: var(--topbar-input-bg-color);
-                   
+
                 }
             }
         }
