@@ -8,7 +8,13 @@ import { Establishment } from '../../models/etablissement';
 import { Equipe } from '../../models/equipe';
 import { catchError } from 'rxjs';
 import { contract } from '../../models/contract';
-
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
 @Component({
   selector: 'app-contract',
   templateUrl: './contract.component.html',
@@ -20,11 +26,14 @@ export class ContractComponent {
   showFilters = false;
   page: any;
   size: any;
+  offlineRequests: OfflineRequest[] = []
   sort: any;
   option: any;
   totalRecords : any ;
+  showOfflineOperationsTable = false;
   loading = false ;
   postdate  = new Date();
+  offlineDeleteVisible = false; 
   date : string = this.postdate.toString()
   showdate : any ; 
   timezone = 'local';
@@ -58,10 +67,15 @@ export class ContractComponent {
     }
 
   async ngOnInit(){
-
+    this.strapiService.offlineOperations$.subscribe(show => {
+      this.showOfflineOperationsTable = show;
+    });
+    this.offlineRequests = this.strapiService.getQueuedRequests();
+    console.log('Offline Requests:', this.offlineRequests);
+  this.showOfflineOperationsTable = this.offlineRequests.length > 0;
   }
 
-  constructor( private messageService: MessageService , private strapi : StrapiService){ }
+  constructor( private messageService: MessageService , private strapi : StrapiService,private strapiService: StrapiService){ }
 
   async getDep(){
     this.loading = true
@@ -128,10 +142,19 @@ export class ContractComponent {
       }
       this.visible = false ;
       this.contract = {};
+      // if (!navigator.onLine) {
+      // this.strapiService.getQueuedRequests();
+      // }
   }
 
   async deletedep(){
     const id = this.contract.id
+    if (!navigator.onLine) {
+      // Emit an event to show the dialog when offline
+      this.offlineDeleteVisible=true;
+      console.log('No internet connection. Delete operation not allowed.');
+      return; // Prevent further execution
+    }
     try{
       await this.strapi.deleteById('type-contrats', id!)
       this.getDep();
@@ -139,4 +162,39 @@ export class ContractComponent {
     }catch (e) {
     }
   }
+  closeDialog() {
+    this.offlineDeleteVisible = false;
+  }
+  
+
+  // hedhi tekhdem 
+  // async deleteRequest(request: OfflineRequest): Promise<void> {
+  //   try {
+  //     await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+  //     this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key); // Remove from in-memory array
+  //     console.log(`Request with key ${request.key} deleted from memory`);
+  //     this.strapiService.getQueuedRequests()
+  //   } catch (error) {
+  //     console.error('Failed to delete the request:', error);
+  //   }
+  // }
+  async deleteRequest(request: OfflineRequest): Promise<void> {
+    try {
+      console.log(`Attempting to delete request with key ${request.key}`);
+      await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+      console.log(`Successfully deleted request with key ${request.key} from DB`);
+  
+      // Update in-memory array
+      this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key);
+      console.log(`Updated offlineRequests after deletion:`, this.offlineRequests);
+  
+      // Fetch updated requests from service to ensure consistency
+      
+      //this.offlineRequests = this.strapiService.getQueuedRequests();
+      this.strapiService.getQueuedRequests();
+    } catch (error) {
+      console.error('Failed to delete the request:', error);
+    }
+  }
+  
 }

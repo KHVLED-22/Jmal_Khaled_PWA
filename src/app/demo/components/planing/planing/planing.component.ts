@@ -5,6 +5,13 @@ import {StrapiService} from '../../../service/strapi.service'
 import { GroupeRegimeHoraire, JourRegimeHoraire, Planning } from '../../models/planing';
 import { Equipe, UserData } from '../../models/equipe';
 import { DatePipe } from '@angular/common';
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
 @Component({
   selector: 'app-planing',
   templateUrl: './planing.component.html',
@@ -20,6 +27,7 @@ export class PlaningComponent {
   sort: any;
   option: any;
   totalRecords : any ;
+  offlineDeleteVisible = false; 
   loading = false ;
   postdate  = new Date();
   date : string = this.postdate.toString()
@@ -28,12 +36,14 @@ export class PlaningComponent {
   checked : boolean = false ;
   addpointage : any = {};
   selectedmachine : any [] =  [] ;
+  showOfflineOperationsTable = false;
   usermachineid : any ;
   itemdelete : any = {}
   filterdata = '';
   searchdate : any ;
   planing : Planning = {} ;
   oldHoraire : JourRegimeHoraire [] = [] ;
+  offlineRequests: OfflineRequest[] = []
   planings : Planning [] = [];
   Groupes : GroupeRegimeHoraire [] = []
   JourHoraire : JourRegimeHoraire [] = []
@@ -82,7 +92,13 @@ modif: boolean = false ;
     this.users = UserData.mapUsers(datauser);
     const data = await this.strapi.getFromStrapi('equipes',this.page,this.size,this.sort,this.option,undefined,undefined,undefined,this.searchdate,'&populate=*'+this.filterdata ,'date')
     this.equipes = Equipe.mapEquipes(data) 
-    this.filtredUsers = this.users
+    this.filtredUsers = this.users;
+    this.strapiService.offlineOperations$.subscribe(show => {
+      this.showOfflineOperationsTable = show;
+    });
+    this.offlineRequests = this.strapiService.getQueuedRequests();
+    console.log('Offline Requests:', this.offlineRequests);
+  this.showOfflineOperationsTable = this.offlineRequests.length > 0;
   }
 
   filterUsers(event: any) {
@@ -179,7 +195,7 @@ modif: boolean = false ;
     return new Date(date.getTime() + minutes * 60000);
   }
 
-  constructor(public datePipe: DatePipe , private messageService: MessageService , private strapi : StrapiService){ }
+  constructor(public datePipe: DatePipe , private messageService: MessageService , private strapi : StrapiService,private strapiService: StrapiService){ }
   
   async getPlaning(){
       this.loading = true
@@ -320,11 +336,29 @@ modif: boolean = false ;
 
   async deletePlaning(){
     const id = this.planing.id
+    if (!navigator.onLine) {
+      // Emit an event to show the dialog when offline
+      this.offlineDeleteVisible=true;
+      console.log('No internet connection. Delete operation not allowed.');
+      return; // Prevent further execution
+    }
     try{
       await this.strapi.deleteById('regime-horaires', id!)
       this.getPlaning();
       this.confirmDeleteVisible = false ;
     }catch (e) {
+    }
+  }
+  closeDialog() {
+    this.offlineDeleteVisible = false;
+  }
+  async deleteRequest(request: OfflineRequest): Promise<void> {
+    try {
+      await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+      this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key); // Remove from in-memory array
+      console.log(`Request with key ${request.key} deleted from memory`);
+    } catch (error) {
+      console.error('Failed to delete the request:', error);
     }
   }
 }

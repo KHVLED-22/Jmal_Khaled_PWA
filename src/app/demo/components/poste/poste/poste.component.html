@@ -109,6 +109,64 @@
                     <p-button label="Confirmer" icon="pi pi-check" (click)="deletedep()"></p-button>
                 </div>
             </p-dialog>
+
+             <!-------------------------- offline Delete Pointage Dialog ----------------------->
+
+             <p-dialog header="Supprimer pointage" [modal]="true" [(visible)]="offlineDeleteVisible"
+             [style]="{ width: '25rem' }">
+             <div class="text-center">
+                 <p>Vous ne pouvez pas supprimer lorsque vous êtes hors ligne</p>
+             </div>
+             <div class="flex justify-content-around mt-4">
+                 <p-button severity="secondary" label="Fermer" icon="pi pi-times" class="p-button-secondary"
+                     (click)="closeDialog()"></p-button>
+             </div>
+         </p-dialog>
         </div>
+       <!-------------------------- offline équipe actions Dialog ----------------------->
+
+<p-table #dataTable [columns]="SelectedCols" *ngIf="showOfflineOperationsTable" 
+[tableStyle]="{'min-width': '60rem'}" responsiveLayout="stack"
+[loading]="loading" scrollHeight="flex" dataKey="key" [value]="offlineRequests">
+
+<ng-template pTemplate="header">
+  <tr>
+    <th>Journal</th>
+    <th>Titre</th>
+    <th>Description</th>
+    <th>Départements</th>
+    <th>Employés</th>
+    <th>Status</th>
+    <th>Action</th> <!-- Action Column -->
+  </tr>
+</ng-template>
+
+<ng-template pTemplate="body" let-request>
+  <tr>
+    <td>
+      <ng-container *ngIf="request.method === 'POST'">
+        Vous avez ajouté une poste : "{{ request.data?.data.titre }}"
+      </ng-container>
+      <ng-container *ngIf="request.method === 'PUT'">
+        Vous avez modifié la poste : "{{ request.data?.data.titre }}"
+      </ng-container>
+    </td>
+    <td>{{ request.data?.data.titre || 'Unknown Titre' }}</td>
+    <td>{{ request.data?.data.description || 'No Description' }}</td>
+    <td>{{ request.data?.data.departements || 'No Départements' }}</td>
+    <td>{{ request.data?.data.employes || 'No Employés' }}</td>
+    <td>Cette opération va être exécutée lorsque vous êtes en ligne !</td>
+
+    <!-- Action Column with Delete Button -->
+    <td>
+      <button pButton type="button" label="Supprimer" icon="pi pi-trash"
+        class="p-button-danger" (click)="deleteRequest(request)">
+      </button>
+    </td>
+  </tr>
+</ng-template>
+
+</p-table>
+
     </div>
 </div>

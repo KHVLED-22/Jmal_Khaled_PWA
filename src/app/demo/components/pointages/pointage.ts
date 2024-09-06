@@ -60,8 +60,8 @@ class PointageItem {
         this.status = attributes?.status;
 
         this.timestamp = this.convertToLocalTimezone(attributes?.timestamp);
-        console.log(this.timestamp)
-        console.log(attributes.timestamp)
+        //console.log(this.timestamp)
+        //console.log(attributes.timestamp)
 
         this.isDeleted = attributes?.isDeleted;
         this.virtuelle = attributes?.virtuelle;

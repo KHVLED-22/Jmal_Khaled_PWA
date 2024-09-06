@@ -102,7 +102,18 @@
         </p-dialog>
         
         
+<!-------------------------- offline Delete Pointage Dialog ----------------------->
 
+<p-dialog header="Supprimer pointage" [modal]="true" [(visible)]="offlineDeleteVisible"
+[style]="{ width: '25rem' }">
+<div class="text-center">
+    <p>Vous ne pouvez pas supprimer lorsque vous êtes hors ligne</p>
+</div>
+<div class="flex justify-content-around mt-4">
+    <p-button severity="secondary" label="Fermer" icon="pi pi-times" class="p-button-secondary"
+        (click)="closeDialog()"></p-button>
+</div>
+</p-dialog>
 
             <!-------------------------- Delete Pointage Dialog ----------------------->
 
@@ -118,5 +129,48 @@
                 </div>
             </p-dialog>
         </div>
+        <!-------------------------- Offline Delete Pointage Dialog ----------------------->
+
+<p-table #dataTable [columns]="SelectedCols" *ngIf="showOfflineOperationsTable" 
+[tableStyle]="{'min-width': '60rem'}" responsiveLayout="stack"
+[loading]="loading" scrollHeight="flex" dataKey="key" [value]="offlineRequests">
+
+<ng-template pTemplate="header">
+<tr>
+<th>Journal</th>
+<th>Nom</th> <!-- New Nom Column -->
+<th>Matricule Fiscale</th> <!-- New Matricule Fiscale Column -->
+<th>Téléphone</th> <!-- New Telephone Column -->
+<th>Status</th>
+<th>Action</th> <!-- Action Column -->
+</tr>
+</ng-template>
+
+<ng-template pTemplate="body" let-request>
+<tr>
+<td>
+<ng-container *ngIf="request.method === 'POST'">
+ Vous avez ajouté une société : "{{request.data?.data.nom}}"
+</ng-container>
+<ng-container *ngIf="request.method === 'PUT'">
+ Vous avez modifié une société : "{{request.data?.data.nom}}"
+</ng-container>
+</td>
+<td>{{ request.data?.data.nom || 'Unknown Nom' }}</td> <!-- Display Nom -->
+<td>{{ request.data?.data.matriculeFiscale || 'Unknown Matricule Fiscale' }}</td> <!-- Display Matricule Fiscale -->
+<td>{{ request.data?.data.tel || 'Unknown Tel' }}</td> <!-- Display Telephone -->
+<td>Cette opération va être exécutée lorsque vous êtes en ligne !</td>
+
+<!-- Action Column with Delete Button -->
+<td>
+<button pButton type="button" label="Supprimer" icon="pi pi-trash"
+       class="p-button-danger" (click)="deleteRequest(request)">
+</button>
+</td>
+</tr>
+</ng-template>
+
+</p-table>
+
     </div>
 </div>

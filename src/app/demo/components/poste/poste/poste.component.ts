@@ -4,7 +4,13 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { poste } from '../../models/poste';
 import { Establishment } from '../../models/etablissement';
 import { Departement } from '../../models/departement';
-
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
 @Component({
   selector: 'app-poste',
   templateUrl: './poste.component.html',
@@ -18,6 +24,9 @@ export class PosteComponent {
   sort: any;
   option: any;
   totalRecords : any ;
+  offlineDeleteVisible = false; 
+  showOfflineOperationsTable = false;
+  offlineRequests: OfflineRequest[] = []
   loading = false ;
   postdate  = new Date();
   date : string = this.postdate.toString()
@@ -54,10 +63,17 @@ export class PosteComponent {
 
   async ngOnInit(){
     const dataEtab = await this.strapi.getFromStrapi('departements',1,25,'id',-1,undefined,undefined,undefined,undefined,'')
-    this.departements = Departement.mapDepartements(dataEtab) 
+    this.departements = Departement.mapDepartements(dataEtab) ;
+    this.strapiService.offlineOperations$.subscribe(show => {
+      this.showOfflineOperationsTable = show;
+    });
+    this.offlineRequests = this.strapiService.getQueuedRequests();
+    console.log('Offline Requests:', this.offlineRequests);
+  this.showOfflineOperationsTable = this.offlineRequests.length > 0;
+
   }
 
-  constructor( private messageService: MessageService , private strapi : StrapiService){ }
+  constructor( private messageService: MessageService , private strapi : StrapiService,private strapiService: StrapiService){ }
 
   async getDep(){
     this.loading = true
@@ -133,11 +149,29 @@ export class PosteComponent {
 
   async deletedep(){
     const id = this.poste.id
+    if (!navigator.onLine) {
+      // Emit an event to show the dialog when offline
+      this.offlineDeleteVisible=true;
+      console.log('No internet connection. Delete operation not allowed.');
+      return; // Prevent further execution
+    }
     try{
       await this.strapi.deleteById('postes', id!)
       this.getDep();
       this.confirmDeleteVisible = false ;
     }catch (e) {
     }
+  }
+  async deleteRequest(request: OfflineRequest): Promise<void> {
+    try {
+      await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+      this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key); // Remove from in-memory array
+      console.log(`Request with key ${request.key} deleted from memory`);
+    } catch (error) {
+      console.error('Failed to delete the request:', error);
+    }
+  }
+  closeDialog() {
+    this.offlineDeleteVisible = false;
   }
 }

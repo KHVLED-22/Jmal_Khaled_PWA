@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild ,OnInit, HostListener , Renderer2  } from '@angular/core';
+import { Component, ElementRef, ViewChild ,OnInit , Renderer2 , ChangeDetectorRef } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { pointage } from '../../pointage';
 import { StrapiService } from '../../../../service/strapi.service'
@@ -7,10 +7,16 @@ import { Establishment } from '../../../models/etablissement';
 import { Machine } from '../../../models/machine';
 import { Table } from 'primeng/table';
 import * as XLSX from 'xlsx';
-import { Employee } from '../../../models/Employe';
-// import { cp } from 'fs';
 
 
+// types.ts
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
 
 @Component({
   selector: 'app-list-pointages',
@@ -43,6 +49,9 @@ export class ListPointagesComponent implements OnInit  {
   addpointage: any = {};
   machines: Machine[] = [];
   selectedmachine: any[] = [];
+  offlineDeleteVisible = false; 
+  showOfflineOperationsTable = false;
+  offlineRequests: OfflineRequest[] = [];
   usermachineid: any;
   itemdelete: any = {}
   filterdata = '';
@@ -69,27 +78,30 @@ export class ListPointagesComponent implements OnInit  {
     { header: 'Temps total', shortHeader: "T. total", field: 'nb_heures', width: 10, sortable: false }
   ];
 
-  constructor(private messageService: MessageService, private strapi: StrapiService, private renderer: Renderer2) {
+  constructor(private messageService: MessageService, private strapi: StrapiService,  private cdr: ChangeDetectorRef,private strapiService: StrapiService) {
     this.loadingData = this.strapi.isApiCallInProgress();
 }
 
-  filter() {
+  filter() { //button azre9 filter
+    console.log(' filter function 9e3da tekhdem')
+
     this.dataTable.first = 0; //Réinitialise l'index du premier élément affiché dans la table à zéro, ce qui signifie que la table recommence à afficher les résultats à partir de la première page.
     this.page = 0
     console.log(this.selectedEtablissement)
-    var filters = ``;         //variable
-    if (this.selectedEtablissement) {
-      this.selectedEtablissement.forEach((SE: any) => {
-        filters += `filters[user][etablissement][id][$in]=${SE.id}&`;
-      });
-    }
-    if (this.selectedusers) {
-      this.selectedusers.forEach((SE: any) => {
-        filters += `filters[user][id][$in]=${SE.id}&`;
-      });
-    }
-    this.filterdata = filters;
-    this.getPointages();
+    var filters = ``;         // Initialize the filters variable
+if (this.selectedEtablissement) {
+  this.selectedEtablissement.forEach((SE: any) => {
+    filters += `filters[user][etablissement][id][$in]=${SE.id}&`;
+  });
+}
+if (this.selectedusers) {
+  this.selectedusers.forEach((SE: any) => {
+    filters += `filters[user][id][$in]=${SE.id}&`;
+  });
+}
+
+    this.filterdata = filters; //voir getPointages()
+    this.getPointages();  // voir getPointages()
     console.log(filters);
 
     setTimeout(() => {
@@ -162,7 +174,7 @@ export class ListPointagesComponent implements OnInit  {
     }
   }
 
-  async senddata(): Promise<void> {
+  async senddata(): Promise<void> { //mta3 export
     if (this.searchdate && this.searchdate.length === 2) { //This condition checks if searchdate is defined and if it contains exactly two dates (start and end).
       const [start, end] = this.searchdate; //It extracts the start and end dates from the searchdate array.
       const diffInDays = (end.getTime() - start.getTime()) / (1000 * 3600 * 24); //getTime() returns the number of milliseconds since January 1, 1970.
@@ -206,6 +218,8 @@ export class ListPointagesComponent implements OnInit  {
     let count = 0
     try {
       do {
+        console.log('wake up filter mta3 senddata')
+
         const response: any = await this.strapi.getFromStrapi(
           'user-pointages',
           page,
@@ -313,15 +327,17 @@ export class ListPointagesComponent implements OnInit  {
   }
 
   filterusers(event: any) { //Filters users based on whether their establishment ID matches any of the selected establishment IDs.
-    console.log(this.selectedEtablissement);//mta3 el filters
+    console.log('selected etablissments' ,this.selectedEtablissement);//mta3 el filters
+    console.log('filterusers function');
+    console.log('filtred users',this.filtredUsers);
     if (event.value.length > 0) {
-      const selectedIds = event.value.map((item: any) => item.id); //mapping over the event.value array and extracting the id property from each item.
+      const selectedIds = event.value.map((item: any) => item.id);
       this.filtredUsers = this.users.filter((user: any) =>
         user.etablissement.id && selectedIds.includes(user.etablissement.id)
-      );//Filter Users by Selected Establishments
+      );
     } else {
-      this.filtredUsers = this.users;//Reset Filtered Users if No Establishments are Selected
-    }
+      this.filtredUsers = this.users;
+    }    
   }
 
   async importCSV(event: any) {
@@ -380,6 +396,12 @@ export class ListPointagesComponent implements OnInit  {
     })//Uses the strapi service to fetch data from the 'parametre' endpoint. Extracts the lastSyncDateTime attribute from the response and assigns it to the syncroDate property.
     
     console.log('Sycnro data is : ', this.syncroDate)
+    this.strapiService.offlineOperations$.subscribe(show => {
+      this.showOfflineOperationsTable = show;
+    });
+    this.offlineRequests = this.strapiService.getQueuedRequests();
+    console.log('Offline Requests:', this.offlineRequests);
+  this.showOfflineOperationsTable = this.offlineRequests.length > -1;
   }
 
 
@@ -426,7 +448,7 @@ export class ListPointagesComponent implements OnInit  {
         undefined, // Other parameters (not used here).
         this.searchdate, // The search date or date range.
         '&populate=pointages&populate=user&populate=user.etablissement&' + this.filterdata, // Additional query parameters for populating related data.
-        'date' // Default sort field.
+        'date'// Default sort field.
     );
 
     // Set the total number of records based on the response from Strapi.
@@ -449,16 +471,24 @@ export class ListPointagesComponent implements OnInit  {
 }
 
 
-  async deletePointage() {
-    const data = { //This line creates a data object containing the isDeleted property set to true. This object will be used to update the pointage record.
-      "data": {
-        isDeleted: true //delete hia juste tbedel el etat isDeleted = true (mekch bech tfsakhha berrasmi)
-      }
-    }
-    await this.strapi.updateById('pointages', this.itemdelete.id, data) //This line sends an asynchronous request to the Strapi service to update the pointage record identified by this.itemdelete.id, setting its isDeleted property to true.
-    this.getPointages();
-    this.confirmDeleteVisible = false;
+async deletePointage() {
+  if (!navigator.onLine) {
+    // Emit an event to show the dialog when offline
+    this.offlineDeleteVisible=true;
+    console.log('No internet connection. Delete operation not allowed.');
+    return; // Prevent further execution
   }
+  const data = { //This line creates a data object containing the isDeleted property set to true. This object will be used to update the pointage record.
+    "data": {
+      isDeleted: true //delete hia juste tbedel el etat isDeleted = true (mekch bech tfsakhha berrasmi)
+    }
+  }
+  await this.strapi.updateById('pointages', this.itemdelete.id, data) //This line sends an asynchronous request to the Strapi service to update the pointage record identified by this.itemdelete.id, setting its isDeleted property to true.
+  this.getPointages();
+  this.confirmDeleteVisible = false;
+  console.log('list-pointage component delete fn');
+}
+
 
   async addmachine() {
     console.log(this.addpointage.user.id);
@@ -500,6 +530,7 @@ export class ListPointagesComponent implements OnInit  {
       return false;
     }
   }
+  
   async addPointage() {// handle the addition of a new pointage (likely related to time or activity tracking) based on certain conditions and user selections.
     console.log('date pointage est :', this.addpointage.date);
     const datapoint = new Date(this.addpointage.date) //Converts the provided date to a JavaScript Date object.
@@ -532,19 +563,18 @@ export class ListPointagesComponent implements OnInit  {
       date.setHours(date.getHours() - 2); //Subtracts 2 hours from the hours component of date. This adjustment might be specific to the application's requirements, possibly related to timezone conversion or other business logic.
       date = date.toISOString();//Converts the date object to an ISO string format (YYYY-MM-DDTHH:mm:ss.sssZ). This format is widely used for transmitting dates over networks or saving them in databases.
       console.log('dateto send :', date);//Logs to the console the ISO string representation of date, which is the final date value prepared for sending to the server.
-      const data = { //Preparing Data Object for API Call:
-
+      const data = {
         "data": {
-          "uid": this.usermachineid.toString(),// Converted to string representation of this.usermachineid.
+          "uid": this.usermachineid?.toString() || 'unknown', // Fallback to 'unknown' if undefined
           "user_id": this.addpointage.id.toString(),
-          "machine": this.selectedmachine[0].id,//Id of the selected machine (this.selectedmachine[0].id).
+          "machine": this.selectedmachine[0].id,
           "status": true,
-          "timestamp": date,// ISO string representation of the adjusted date.
+          "timestamp": date,
           "isDeleted": false,
           "virtuelle": true
         }
-
-      }
+      };
+      
       await this.strapi.postStrapi('pointages', data) //Asynchronously sends a POST request to the server using postStrapi method to create a new pointage with the provided data object.
       this.getPointages() // refresh the pointages list after adding a new pointage. This ensures data consistency and reflects the newly added pointage.
       this.visible = false; // hiding the form or dialog after successfully adding the pointage.
@@ -557,5 +587,42 @@ export class ListPointagesComponent implements OnInit  {
       });
     }
   }
+
+
+  ngAfterViewInit() {
+    // Use setTimeout to defer the assignment of loadingData
+    setTimeout(() => {
+      this.loadingData = this.strapi.isApiCallInProgress(); // Adjust this logic based on your actual need
+    }, 0);
+
+    // Alternatively, use ChangeDetectorRef to manually trigger change detection
+    this.loadingData = this.strapi.isApiCallInProgress();
+    this.cdr.detectChanges();
+  }
+  closeDialog() {
+    this.offlineDeleteVisible = false;
+  }
+
+
+  async deleteRequest(request: OfflineRequest): Promise<void> {
+    try {
+      console.log(`Attempting to delete request with key ${request.key}`);
+      await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+      console.log(`Successfully deleted request with key ${request.key} from DB`);
+      
+      // Update in-memory array
+      this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key);
+      console.log(`Updated offlineRequests after deletion:`, this.offlineRequests);
+      
+      // Refresh the data table view if needed
+      // this.dataTable?.refresh(); // Uncomment if needed and ensure dataTable reference is correct
+      this.strapiService.getQueuedRequests();
+    } catch (error) {
+      console.error('Failed to delete the request:', error);
+    }
+  }
+  
+  
 }
+
 

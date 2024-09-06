@@ -11,6 +11,14 @@ import { Societe } from '../../models/societe';
 import { Machine } from '../../models/machine';
 import { poste } from '../../models/poste';
 
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
+
 @Component({
   selector: 'app-departement',
   templateUrl: './departement.component.html',
@@ -24,11 +32,14 @@ export class DepartementComponent {
   size: any;
   sort: any;
   option: any;
+  offlineDeleteVisible = false; 
+  offlineRequests: OfflineRequest[] = [];
   totalRecords : any ;
   loading = false ;
   postdate  = new Date();
   date : string = this.postdate.toString()
   showdate : any ; 
+  showOfflineOperationsTable = false;
   timezone = 'local';
   checked : boolean = false ;
   addpointage : any = {};
@@ -75,6 +86,12 @@ export class DepartementComponent {
   async ngOnInit(){
     const datauser = await this.strapi.getFromStrapi('users', undefined, undefined, undefined, undefined, undefined, undefined, undefined, undefined, 'populate=etablissement');
     this.users = UserData.mapUsers(datauser);
+    this.strapiService.offlineOperations$.subscribe(show => {
+      this.showOfflineOperationsTable = show;
+    });
+    this.offlineRequests = this.strapiService.getQueuedRequests();
+    this.showOfflineOperationsTable = this.offlineRequests.length > 0;
+
   }
 
   isOptionDisabled(equipe: Equipe): boolean {
@@ -87,7 +104,7 @@ export class DepartementComponent {
     return false;
   }
 
-  constructor( private messageService: MessageService , private strapi : StrapiService){ }
+  constructor( private messageService: MessageService , private strapi : StrapiService,private strapiService: StrapiService){ }
 
   formatDate(dateString: string, type: string): string {
     const date = new Date(dateString);
@@ -203,6 +220,12 @@ export class DepartementComponent {
 
   async deletedep(){
     const id = this.departement.id
+    if (!navigator.onLine) {
+      // Emit an event to show the dialog when offline
+      this.offlineDeleteVisible=true;
+      console.log('No internet connection. Delete operation not allowed.');
+      return; // Prevent further execution
+    }
     try{
       await this.strapi.deleteById('departements', id!)
       this.getDep();
@@ -212,7 +235,17 @@ export class DepartementComponent {
   }
 
 
+  closeDialog() {
+    this.offlineDeleteVisible = false;
+  }
 
-
-
+  async deleteRequest(request: OfflineRequest): Promise<void> {
+    try {
+      await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+      this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key); // Remove from in-memory array
+      console.log(`Request with key ${request.key} deleted from memory`);
+    } catch (error) {
+      console.error('Failed to delete the request:', error);
+    }
+  }
 }

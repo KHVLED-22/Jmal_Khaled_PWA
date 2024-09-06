@@ -553,6 +553,69 @@
                     <p-button label="Confirmer" icon="pi pi-check" (click)="deletePointage()"></p-button>
                 </div>
             </p-dialog>
+
+            <!-------------------------- offline Delete Pointage Dialog ----------------------->
+
+<p-dialog header="Supprimer pointage" [modal]="true" [(visible)]="offlineDeleteVisible"
+[style]="{ width: '25rem' }">
+<div class="text-center">
+    <p>Vous ne pouvez pas supprimer lorsque vous êtes hors ligne</p>
+</div>
+<div class="flex justify-content-around mt-4">
+    <p-button severity="secondary" label="Fermer" icon="pi pi-times" class="p-button-secondary"
+        (click)="closeDialog()"></p-button>
+</div>
+</p-dialog>
         </div>
+        <!-------------------------- offline Delete Pointage Dialog ----------------------->
+
+        <p-table #dataTable [columns]="SelectedCols" *ngIf="showOfflineOperationsTable" 
+         [tableStyle]="{'min-width': '60rem'}" responsiveLayout="stack"
+         [loading]="loading" scrollHeight="flex" dataKey="key" [value]="offlineRequests">
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th>Journal</th>
+      <th>Nom</th>
+      <th>Prénom</th>
+      <th>Téléphone</th>
+      <th>Société</th>
+      <th>Département</th>
+      <th>Poste</th>
+      <th>Status</th>
+      <th>Action</th> <!-- Action Column -->
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-request>
+    <tr>
+      <td>
+        <ng-container *ngIf="request.table === 'createEmploye'">
+          Vous avez ajouté un employe : "{{request.data?.nom}} {{request.data?.prenom}}"
+        </ng-container>
+        <ng-container *ngIf="request.table === 'updateEmploye'">
+          Vous avez modifié un employe : "{{request.data?.nom}} {{request.data?.prenom}}"
+        </ng-container>
+      </td>
+      <td>{{ request.data?.nom || 'Unknown Nom' }}</td> <!-- Nom -->
+      <td>{{ request.data?.prenom || 'Unknown Prénom' }}</td> <!-- Prénom -->
+      <td>{{ request.data?.tel || 'Unknown Téléphone' }}</td> <!-- Téléphone -->
+      <td>{{ request.data?.societe || 'Unknown Société' }}</td> <!-- Société -->
+      <td>{{ request.data?.departement || 'Unknown Département' }}</td> <!-- Département -->
+      <td>{{ request.data?.poste || 'Unknown Poste' }}</td> <!-- Poste -->
+      <td>Cette opération va être exécutée lorsque vous êtes en ligne !</td>
+
+      <!-- Action Column with Delete Button -->
+      <td>
+        <button pButton type="button" label="Supprimer" icon="pi pi-trash"
+                class="p-button-danger" (click)="deleteRequest(request)">
+        </button>
+      </td>
+    </tr>
+  </ng-template>
+
+</p-table>
+
+
     </div>
 </div>

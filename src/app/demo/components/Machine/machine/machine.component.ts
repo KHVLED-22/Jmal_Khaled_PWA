@@ -3,7 +3,13 @@ import { Machine } from '../../models/machine';
 import {StrapiService} from '../../../service/strapi.service'
 import { ConfirmationService, MessageService } from 'primeng/api';
 import * as XLSX from 'xlsx';
-
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
 @Component({
   selector: 'app-machine',
   templateUrl: './machine.component.html',
@@ -18,7 +24,10 @@ export class MachineComponent {
   option: any;
   totalRecords : any ;
   loading = false ;
+  offlineRequests: OfflineRequest[] = [];
   postdate  = new Date();
+  offlineDeleteVisible = false; 
+  showOfflineOperationsTable = false;
   date : string = this.postdate.toString()
   showdate : any ; 
   timezone = 'local';
@@ -58,6 +67,12 @@ export class MachineComponent {
   }
 
   ngOnInit(): void {
+    this.strapiService.offlineOperations$.subscribe(show => {
+      this.showOfflineOperationsTable = show;
+    });
+    this.offlineRequests = this.strapiService.getQueuedRequests();
+    this.showOfflineOperationsTable = this.offlineRequests.length > 0;
+
   }
 
   async exportMachines(): Promise<void> {
@@ -103,7 +118,7 @@ export class MachineComponent {
     this.loading = false ;
   }
 
-  constructor( private messageService: MessageService , private strapi : StrapiService){ }
+  constructor( private messageService: MessageService , private strapi : StrapiService,private strapiService: StrapiService){ }
 
   formatDate(dateString: string, type: string): string {
     const date = new Date(dateString);
@@ -191,6 +206,12 @@ export class MachineComponent {
 
   async deleteMachine(){
     const id = this.machine.id
+    if (!navigator.onLine) {
+      // Emit an event to show the dialog when offline
+      this.offlineDeleteVisible=true;
+      console.log('No internet connection. Delete operation not allowed.');
+      return; // Prevent further execution
+    }
     try{
       await this.strapi.deleteById('machines', id!)
       this.getmachine();
@@ -198,6 +219,16 @@ export class MachineComponent {
     }catch (e) {
     }
   }
-
-  
+  closeDialog() {
+    this.offlineDeleteVisible = false;
+  }
+  async deleteRequest(request: OfflineRequest): Promise<void> {
+    try {
+      await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+      this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key); // Remove from in-memory array
+      console.log(`Request with key ${request.key} deleted from memory`);
+    } catch (error) {
+      console.error('Failed to delete the request:', error);
+    }
+  }
 }

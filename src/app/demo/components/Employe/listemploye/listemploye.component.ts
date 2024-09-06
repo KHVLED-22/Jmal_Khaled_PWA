@@ -12,6 +12,13 @@ import { poste } from '../../models/poste';
 import { contract } from '../../models/contract';
 import { Planning } from '../../models/planing';
 import { DocumentData , PhotoData  } from '../../models/document';
+export interface OfflineRequest {
+  key: string;
+  method: string;
+  table: string;
+  id?: number;
+  data?: any;
+}
 
 @Component({
   selector: 'app-listemploye',
@@ -29,11 +36,14 @@ option: any;
 totalRecords : any ;
 loading = false ;
 selectedEtablissement : any ;
+showOfflineOperationsTable = false;
 selectedusers : any ;
 postdate  = new Date();
 date : string = this.postdate.toString()
+offlineDeleteVisible = false; 
 Etabs : Establishment [] = [] ;
 users : UserData[] =[]
+offlineRequests: OfflineRequest[] = [];
 showdate : any ; 
 timezone = 'local';
 checked : boolean = false ;
@@ -239,7 +249,7 @@ async onSubmit() {
   };
     console.log(postData);
     try {
-      // this.visible= false ;
+      this.visible= false ;
       await this.strapi.postStrapi('createEmploye',postData)
       this.getPointages()
     } catch (error) {
@@ -250,7 +260,6 @@ async onSubmit() {
       await this.strapi.postStrapi('updateEmploye',this.employee.toPost!())
       this.getPointages()
     } catch (error) {
-      
     }
   }
   this.loading =false
@@ -400,6 +409,12 @@ async ngOnInit() {
   this.contrats = contract.mapContract(datadcontrat);
   this.filteredcontrats = this.contrats
 
+  this.strapiService.offlineOperations$.subscribe(show => {
+    this.showOfflineOperationsTable = show;
+  });
+  this.showOfflineOperationsTable = this.offlineRequests.length > 0;
+  this.offlineRequests = this.strapiService.getQueuedRequests();
+
 }
 
 formatDate(dateString: string, type: string): string {
@@ -428,7 +443,7 @@ reset(){
 }
 
 
-constructor( private messageService: MessageService , private strapi : StrapiService){ }
+constructor( private messageService: MessageService , private strapi : StrapiService,private strapiService: StrapiService){ }
 
 async onLazyLoad(event : any) {
   console.log('event is :',event )
@@ -604,6 +619,12 @@ async getPointages(){
 }
 
 async deletePointage(){
+  if (!navigator.onLine) {
+    // Emit an event to show the dialog when offline
+    this.offlineDeleteVisible=true;
+    console.log('No internet connection. Delete operation not allowed.');
+    return; // Prevent further execution
+  }
   const data = {"data" : {
     isDeleted : true 
   }}
@@ -612,4 +633,16 @@ async deletePointage(){
   this.confirmDeleteVisible = false;
 }
 
+async deleteRequest(request: OfflineRequest): Promise<void> {
+  try {
+    await this.strapiService.deleteRequestFromDB(request.key); // Call the public method in StrapiService
+    this.offlineRequests = this.offlineRequests.filter(req => req.key !== request.key); // Remove from in-memory array
+    console.log(`Request with key ${request.key} deleted from memory`);
+  } catch (error) {
+    console.error('Failed to delete the request:', error);
+  }
+}
+closeDialog() {
+  this.offlineDeleteVisible = false;
+}
 }
